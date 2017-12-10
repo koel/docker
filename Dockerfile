@@ -1,11 +1,10 @@
 FROM php:7.2.0-fpm-alpine3.6 as builder
 
+# TODO: Pin Versions
+
 # The version and repository to clone koel from.
 ENV KOEL_CLONE_SOURCE https://github.com/phanan/koel.git
 ENV KOEL_VERSION_REF v3.7.0
-
-# Used to ensure only necessary dependencies are pulled when running yarn.
-ENV NODE_ENV production
 
 # The version of yarn to install.
 ENV YARN_VERSION 1.3.2
@@ -15,8 +14,9 @@ ENV COMPOSER_VERSION 1.1.2
 
 # Install dependencies.
 RUN apk add --update \
+  nodejs=6.10.3-r1 \
+  tar \
   curl \
-  gnupg \
   openssl \
   git \
   zlib-dev \
@@ -38,9 +38,12 @@ RUN curl -sS https://getcomposer.org/installer \
           --version=${COMPOSER_VERSION} && \
 	chmod +x /usr/local/bin/composer
 
-# Install yarn. A modern apk package is only available in alpine 3.7.
-RUN curl -o- -L https://yarnpkg.com/install.sh \
-  | sh -s -- --version ${YARN_VERSION}
+# Install yarn. A modern apk package is only available in alpine 3.7 which there
+# is no php image for.
+ADD https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v${YARN_VERSION}.tar.gz /opt/yarn.tar.gz
+RUN mkdir -p /opt/yarn/ && tar xf /opt/yarn.tar.gz --directory /opt/yarn --strip-components=1
+ENV PATH $PATH:/opt/yarn/bin/
+RUN yarn --version
 
 # Clone the repository.
 RUN git clone $KOEL_CLONE_SOURCE -b $KOEL_VERSION_REF /tmp/koel
@@ -51,7 +54,6 @@ WORKDIR /tmp/koel
 # Install runtime dependencies.
 RUN composer install
 RUN yarn install
-RUN yarn run production
 
 # The runtime image.
 FROM php:7.2.0-fpm-alpine3.6
@@ -64,8 +66,5 @@ RUN apk add --update \
   php7-simplexml \
   && docker-php-ext-install zip
 
-# TODO: Run Koel Init?
-# TODO: Pin Versions
-
 # Copy artifacts from build stage.
-COPY --from=builder /tmp/koel /koel
+COPY --from=builder /tmp/koel /var/www/html
