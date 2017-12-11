@@ -1,4 +1,4 @@
-FROM php:7.2.0-fpm-alpine3.6 as builder
+FROM php:7.2.0-apache-stretch as builder
 
 # TODO: Pin Versions
 
@@ -6,25 +6,42 @@ FROM php:7.2.0-fpm-alpine3.6 as builder
 ENV KOEL_CLONE_SOURCE https://github.com/phanan/koel.git
 ENV KOEL_VERSION_REF v3.7.0
 
-# The version of yarn to install.
-ENV YARN_VERSION 1.3.2
-
 # The version of php-composer to install.
 ENV COMPOSER_VERSION 1.1.2
 
-# Install dependencies.
-RUN apk add --update \
-  nodejs=6.10.3-r1 \
-  tar \
-  curl \
-  openssl \
-  git \
-  zlib-dev \
-  php7-mbstring \
-  php7-curl \
-  php7-simplexml
+# The version of nodejs to install.
+ENV NODE_VERSION node_8.x
 
-# The apk version wasn't working so using docker-php-ext-install instead. Not
+# Install dependencies to install dependencies.
+RUN apt-get update && apt-get install --yes gnupg2 apt-transport-https
+
+# Add node repository.
+RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
+    | apt-key add - && \
+  echo "deb https://deb.nodesource.com/$NODE_VERSION stretch main" \
+    | tee /etc/apt/sources.list.d/nodesource.list && \
+  echo "deb-src https://deb.nodesource.com/$NODE_VERSION stretch main" \
+    | tee --append /etc/apt/sources.list.d/nodesource.list
+
+# Add yarn repository.
+RUN curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg \
+    | apt-key add - && \
+  echo "deb https://dl.yarnpkg.com/debian/ stable main" \
+    | tee /etc/apt/sources.list.d/yarn.list
+
+# Install dependencies.
+RUN apt-get update && \
+  apt-get install --yes \
+  nodejs \
+  yarn \
+  git \
+  php-mbstring \
+  php-curl \
+  php-xml \
+  php7.0-zip \
+  zlib1g-dev
+
+# The repo version wasn't working so using docker-php-ext-install instead. Not
 # using docker-php-ext-install for every extension because it is badly
 # documented.
 RUN docker-php-ext-install zip
@@ -38,14 +55,9 @@ RUN curl -sS https://getcomposer.org/installer \
           --version=${COMPOSER_VERSION} && \
 	chmod +x /usr/local/bin/composer
 
-# Install yarn. A modern apk package is only available in alpine 3.7 which there
-# is no php image for.
-ADD https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v${YARN_VERSION}.tar.gz /opt/yarn.tar.gz
-RUN mkdir -p /opt/yarn/ && tar xf /opt/yarn.tar.gz --directory /opt/yarn --strip-components=1
-ENV PATH $PATH:/opt/yarn/bin/
-RUN yarn --version
+RUN composer --version
 
-# Clone the repository.
+# Clone the koel repository.
 RUN git clone $KOEL_CLONE_SOURCE -b $KOEL_VERSION_REF /tmp/koel
 
 # Place artifacts here.
@@ -56,15 +68,26 @@ RUN composer install
 RUN yarn install
 
 # The runtime image.
-FROM php:7.2.0-fpm-alpine3.6
+FROM php:7.2.0-apache-stretch
 
 # Install dependencies.
-RUN apk add --update \
-  zlib-dev \
-  php7-mbstring \
-  php7-curl \
-  php7-simplexml \
-  && docker-php-ext-install zip
+RUN apt-get update && \
+  apt-get install --yes \
+  php-mbstring \
+  php-curl \
+  php-xml \
+  php7.0-zip \
+  zlib1g-dev
+
+RUN docker-php-ext-install zip
 
 # Copy artifacts from build stage.
-COPY --from=builder /tmp/koel /var/www/html
+COPY --chown=www-data:www-data --from=builder /tmp/koel /var/www/html
+
+# Koel makes use of Larvel's pretty URLs. This requires some additional
+# configuration: https://laravel.com/docs/4.2#pretty-urls
+COPY --chown=www-data:www-data ./.htaccess /var/www/html
+RUN a2enmod rewrite
+
+RUN mkdir -p /var/www/html/storage/log
+RUN chown -R www-data:www-data /var/www/html/storage/log

@@ -1,0 +1,12 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{HTTP:Authorization} ^(.*)
+
+# Apparently Apache thinks nuking the Authorization is ok. This forces it not
+# to. Without this JWT authentication doesn't work.
+# https://github.com/tymondesigns/jwt-auth/issues/81
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+RewriteRule ^ index.php [L]
