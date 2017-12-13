@@ -109,7 +109,9 @@ RUN rm /var/www/html/.env
 # Koel makes use of Larvel's pretty URLs. This requires some additional
 # configuration: https://laravel.com/docs/4.2#pretty-urls
 COPY ./.htaccess /var/www/html
-RUN chown -R www-data:www-data ./.htaccess
+
+# Fix permissions.
+RUN chown -R www-data:www-data /var/www/html
 RUN a2enmod rewrite
 
 # Setup bootstrap script.
