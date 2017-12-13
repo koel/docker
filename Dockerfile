@@ -100,7 +100,7 @@ RUN apt-get update && \
   apt-get clean
 
 # Copy artifacts from build stage.
-COPY --chown=www-data:www-data --from=builder /tmp/koel /var/www/html
+COPY --from=builder /tmp/koel /var/www/html
 
 # Remove configuration file. All configuration should be passed in as
 # environment variables or a bind mounted file at runtime.
@@ -108,7 +108,8 @@ RUN rm /var/www/html/.env
 
 # Koel makes use of Larvel's pretty URLs. This requires some additional
 # configuration: https://laravel.com/docs/4.2#pretty-urls
-COPY --chown=www-data:www-data ./.htaccess /var/www/html
+COPY ./.htaccess /var/www/html
+RUN chown -R www-data:www-data ./.htaccess
 RUN a2enmod rewrite
 
 # Setup bootstrap script.
