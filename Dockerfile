@@ -15,9 +15,14 @@ ARG RUNTIME_DEPS="\
   php7.0-mbstring=7.0.19-1 \
   php7.0-curl=7.0.19-1 \
   php7.0-xml=7.0.19-1 \
-  php7.0-pgsql=7.0.19-1 \
-  php7.0-mysql=7.0.19-1 \
-  zlib1g-dev=1:1.2.8.dfsg-5"
+  zlib1g-dev=1:1.2.8.dfsg-5 \
+  libpq-dev=9.6.6-0+deb9u1"
+
+ARG PHP_RUNTIME_DEPS="\
+  zip \
+  pdo \
+  pdo_mysql \
+  pdo_pgsql"
 
 # Install dependencies to install dependencies.
 RUN apt-get update && apt-get install --yes \
@@ -49,7 +54,8 @@ RUN apt-get update && \
 # The repo version wasn't working so using docker-php-ext-install instead. Not
 # using docker-php-ext-install for every extension because it is badly
 # documented.
-RUN docker-php-ext-install zip
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+  docker-php-ext-install $PHP_RUNTIME_DEPS
 
 # Install composer from getcomposer.org. An apk package is only available in
 # edge (> 3.7).
@@ -81,18 +87,28 @@ ARG RUNTIME_DEPS="\
   php7.0-mbstring=7.0.19-1 \
   php7.0-curl=7.0.19-1 \
   php7.0-xml=7.0.19-1 \
-  php7.0-pgsql=7.0.19-1 \
-  php7.0-mysql=7.0.19-1 \
-  zlib1g-dev=1:1.2.8.dfsg-5"
+  zlib1g-dev=1:1.2.8.dfsg-5 \
+  libpq-dev=9.6.6-0+deb9u1"
+
+ARG PHP_RUNTIME_DEPS="\
+  zip \
+  pdo \
+  pdo_mysql \
+  pdo_pgsql"
 
 # Install dependencies.
 RUN apt-get update && \
   apt-get install --yes $RUNTIME_DEPS && \
-  docker-php-ext-install zip && \
+  docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+  docker-php-ext-install $PHP_RUNTIME_DEPS && \
   apt-get clean
 
 # Copy artifacts from build stage.
 COPY --chown=www-data:www-data --from=builder /tmp/koel /var/www/html
+
+# Remove configuration file. All configuration should be passed in as
+# environment variables or a bind mounted file at runtime.
+RUN rm /var/www/html/.env
 
 # Koel makes use of Larvel's pretty URLs. This requires some additional
 # configuration: https://laravel.com/docs/4.2#pretty-urls
@@ -103,4 +119,7 @@ RUN a2enmod rewrite
 RUN mkdir -p /var/www/html/storage/log
 RUN chown -R www-data:www-data /var/www/html/storage/log
 
+# TODO: Generate APP_KEY
+
 EXPOSE 80
+
