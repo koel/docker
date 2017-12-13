@@ -1,6 +1,8 @@
 docker-koel
 ===========
 
+[![automated-build-badge]][docker-hub]
+
 A docker image with only the bare essentials needed to run [koel]. It includes
 apache and a php runtime with required extensions.
 
@@ -20,3 +22,6 @@ the [`./docker-compose.yml`][compose] file.
 [dbConfig]: https://github.com/phanan/koel/blob/baa5b7af13e7f66ff1d2df1778c65757a73e478f/config/database.php
 [koel]: https://koel.phanan.net/
 [compose]: ./docker-compose.yml
+
+[automated-build-badge]: https://img.shields.io/docker/automated/0xcaff/koel.svg
+[docker-hub]: https://hub.docker.com/r/0xcaff/koel/
