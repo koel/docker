@@ -15,8 +15,7 @@ ARG RUNTIME_DEPS="\
   php7.0-mbstring=7.0.19-1 \
   php7.0-curl=7.0.19-1 \
   php7.0-xml=7.0.19-1 \
-  zlib1g-dev=1:1.2.8.dfsg-5 \
-  libpq-dev=9.6.6-0+deb9u1"
+  zlib1g-dev=1:1.2.8.dfsg-5"
 
 ARG PHP_BUILD_DEPS="zip"
 
@@ -86,20 +85,17 @@ ARG RUNTIME_DEPS="\
   php7.0-curl=7.0.19-1 \
   php7.0-xml=7.0.19-1 \
   zlib1g-dev=1:1.2.8.dfsg-5 \
-  libpq-dev=9.6.6-0+deb9u1 \
   ffmpeg=7:3.2.9-1~deb9u1"
 
 ARG PHP_RUNTIME_DEPS="\
   zip \
   pdo \
   pdo_mysql \
-  pdo_pgsql\
   exif"
 
 # Install dependencies.
 RUN apt-get update && \
   apt-get install --yes ${RUNTIME_DEPS} && \
-  docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
   docker-php-ext-install ${PHP_RUNTIME_DEPS} && \
   apt-get clean
 
