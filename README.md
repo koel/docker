@@ -29,6 +29,9 @@ there, 5xx errors will happen sometimes.
 To see an example of running koel and a database with docker-compose, check out
 the [`./docker-compose.yml`][compose] file.
 
+TODO: Automate this so when the .env file doesn't exist koel:init and
+key:generate are run.
+
 [dbConfig]: https://github.com/phanan/koel/blob/baa5b7af13e7f66ff1d2df1778c65757a73e478f/config/database.php
 [koel]: https://koel.phanan.net/
 [compose]: ./docker-compose.yml

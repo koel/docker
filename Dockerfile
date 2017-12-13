@@ -18,11 +18,7 @@ ARG RUNTIME_DEPS="\
   zlib1g-dev=1:1.2.8.dfsg-5 \
   libpq-dev=9.6.6-0+deb9u1"
 
-ARG PHP_RUNTIME_DEPS="\
-  zip \
-  pdo \
-  pdo_mysql \
-  pdo_pgsql"
+ARG PHP_BUILD_DEPS="zip"
 
 # Install dependencies to install dependencies.
 RUN apt-get update && apt-get install --yes \
@@ -32,9 +28,9 @@ RUN apt-get update && apt-get install --yes \
 # Add node repository.
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-  echo "deb https://deb.nodesource.com/$NODE_VERSION stretch main" \
+  echo "deb https://deb.nodesource.com/${NODE_VERSION} stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list && \
-  echo "deb-src https://deb.nodesource.com/$NODE_VERSION stretch main" \
+  echo "deb-src https://deb.nodesource.com/${NODE_VERSION} stretch main" \
     | tee --append /etc/apt/sources.list.d/nodesource.list
 
 # Add yarn repository.
@@ -49,13 +45,7 @@ RUN apt-get update && \
   nodejs=8.9.3-1nodesource1 \
   yarn=1.3.2-1 \
   git=1:2.11.0-3+deb9u2 \
-  $RUNTIME_DEPS
-
-# The repo version wasn't working so using docker-php-ext-install instead. Not
-# using docker-php-ext-install for every extension because it is badly
-# documented.
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
-  docker-php-ext-install $PHP_RUNTIME_DEPS
+  ${RUNTIME_DEPS}
 
 # Install composer from getcomposer.org. An apk package is only available in
 # edge (> 3.7).
@@ -67,8 +57,16 @@ RUN curl -sS https://getcomposer.org/installer \
 	chmod +x /usr/local/bin/composer && \
   composer --version
 
+# The repo version wasn't working so using docker-php-ext-install instead. Not
+# using docker-php-ext-install for every extension because it is badly
+# documented.
+RUN docker-php-ext-install ${PHP_BUILD_DEPS}
+
+# Change to a restricted user.
+USER www-data
+
 # Clone the koel repository.
-RUN git clone $KOEL_CLONE_SOURCE -b $KOEL_VERSION_REF /tmp/koel
+RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} /tmp/koel
 
 # Place artifacts here.
 WORKDIR /tmp/koel
@@ -88,19 +86,21 @@ ARG RUNTIME_DEPS="\
   php7.0-curl=7.0.19-1 \
   php7.0-xml=7.0.19-1 \
   zlib1g-dev=1:1.2.8.dfsg-5 \
-  libpq-dev=9.6.6-0+deb9u1"
+  libpq-dev=9.6.6-0+deb9u1 \
+  ffmpeg=7:3.2.9-1~deb9u1"
 
 ARG PHP_RUNTIME_DEPS="\
   zip \
   pdo \
   pdo_mysql \
-  pdo_pgsql"
+  pdo_pgsql\
+  exif"
 
 # Install dependencies.
 RUN apt-get update && \
-  apt-get install --yes $RUNTIME_DEPS && \
+  apt-get install --yes ${RUNTIME_DEPS} && \
   docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
-  docker-php-ext-install $PHP_RUNTIME_DEPS && \
+  docker-php-ext-install ${PHP_RUNTIME_DEPS} && \
   apt-get clean
 
 # Copy artifacts from build stage.
@@ -115,11 +115,9 @@ RUN rm /var/www/html/.env
 COPY --chown=www-data:www-data ./.htaccess /var/www/html
 RUN a2enmod rewrite
 
-# Make logging directory with correct permissions.
-RUN mkdir -p /var/www/html/storage/log
-RUN chown -R www-data:www-data /var/www/html/storage/log
-
-# TODO: Generate APP_KEY
+# Setup bootstrap script.
+COPY koel-entrypoint /usr/local/bin/
+ENTRYPOINT ["koel-entrypoint"]
+CMD ["apache2-foreground"]
 
 EXPOSE 80
-
