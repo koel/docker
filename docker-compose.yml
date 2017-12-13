@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  koel:
+    image: 0xcaff/koel
+    depends_on:
+      - database
+    ports:
+      - 80:80
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_USERNAME: koel
+      DB_PASSWORD: koel
+      DB_DATABASE: koel
+    volumes:
+      - ~rtorrent/downloaded:/music
+
+  database:
+    image: postgres:10.1
+    environment:
+      POSTGRES_USER: koel
+      POSTGRES_PASSWORD: koel
+      POSTGRES_DB: koel
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
