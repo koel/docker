@@ -11,7 +11,7 @@ Usage
 
 First start the koel server with a mysql database and music storage volume.
 
-    docker run --name koel -p 80:80 -it 0xcaff/docker-koel
+    docker run --name koel -p 80:80 -it 0xcaff/koel
 
 On the first run, if the `.env` file isn't created, `koel:init` will be run and
 the `APP_KEY` variable will be populated.
