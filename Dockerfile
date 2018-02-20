@@ -80,6 +80,7 @@ FROM php:7.2.0-apache-stretch
 # repeated because docker doesn't seem to have a way to share args across build
 # contexts.
 ARG RUNTIME_DEPS="\
+  netcat-openbsd \
   libcurl4-openssl-dev \
   zlib1g-dev \
   libxml2-dev \
@@ -114,6 +115,11 @@ COPY ./.htaccess /var/www/html
 # Fix permissions.
 RUN chown -R www-data:www-data /var/www/html
 RUN a2enmod rewrite
+
+# Add wait-for.
+RUN curl --output /bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/f71f8199a0dd95953752fb5d3f76f79ced16d47d/wait-for
+RUN chmod +x /bin/wait-for
+RUN wait-for --help
 
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/

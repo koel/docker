@@ -12,6 +12,12 @@ if [ ! -f .env ]
 then
   echo ".env not present. bootstrapping..."
 
+  # Wait for database.
+  echo "waiting for database"
+  echo "${DB_HOST}:${DB_PORT}"
+  wait-for "${DB_HOST}:${DB_PORT}" --timeout=60
+  echo "database initialized"
+
   # Setup Environment
   echo "running koel:init"
   php artisan koel:init
