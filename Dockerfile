@@ -10,15 +10,6 @@ ARG COMPOSER_VERSION=1.1.2
 # The version of nodejs to install.
 ARG NODE_VERSION=node_8.x
 
-# These are dependencies needed both at build time and at runtime.
-ARG RUNTIME_DEPS="\
-  php7.0-mbstring=7.0.19-1 \
-  php7.0-curl=7.0.19-1 \
-  php7.0-xml=7.0.19-1 \
-  zlib1g-dev=1:1.2.8.dfsg-5"
-
-ARG PHP_BUILD_DEPS="zip"
-
 # Install dependencies to install dependencies.
 RUN apt-get update && apt-get install --yes \
   gnupg2=2.1.18-8~deb9u1 \
@@ -38,12 +29,18 @@ RUN curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg \
   echo "deb https://dl.yarnpkg.com/debian/ stable main" \
     | tee /etc/apt/sources.list.d/yarn.list
 
+# These are dependencies needed both at build time and at runtime.
+ARG RUNTIME_DEPS="\
+  libxml2-dev \
+  zlib1g-dev \
+  libcurl4-openssl-dev"
+
 # Install dependencies.
 RUN apt-get update && \
   apt-get install --yes \
-  nodejs=8.9.3-1nodesource1 \
-  yarn=1.3.2-1 \
-  git=1:2.11.0-3+deb9u2 \
+  nodejs \
+  yarn \
+  git \
   ${RUNTIME_DEPS}
 
 # Install composer from getcomposer.org. An apk package is only available in
@@ -55,6 +52,8 @@ RUN curl -sS https://getcomposer.org/installer \
           --version=${COMPOSER_VERSION} && \
 	chmod +x /usr/local/bin/composer && \
   composer --version
+
+ARG PHP_BUILD_DEPS="zip mbstring curl xml"
 
 # The repo version wasn't working so using docker-php-ext-install instead. Not
 # using docker-php-ext-install for every extension because it is badly
@@ -81,13 +80,15 @@ FROM php:7.2.0-apache-stretch
 # repeated because docker doesn't seem to have a way to share args across build
 # contexts.
 ARG RUNTIME_DEPS="\
-  php7.0-mbstring=7.0.19-1 \
-  php7.0-curl=7.0.19-1 \
-  php7.0-xml=7.0.19-1 \
-  zlib1g-dev=1:1.2.8.dfsg-5 \
-  ffmpeg=7:3.2.9-1~deb9u1"
+  libcurl4-openssl-dev \
+  zlib1g-dev \
+  libxml2-dev \
+  ffmpeg"
 
 ARG PHP_RUNTIME_DEPS="\
+  mbstring \
+  curl \
+  xml \
   zip \
   pdo \
   pdo_mysql \

@@ -13,15 +13,28 @@ First start the koel server with a mysql database and music storage volume.
 
     docker run --name koel -p 80:80 -it 0xcaff/koel
 
-On the first run, if the `.env` file isn't created, `koel:init` will be run and
-the `APP_KEY` variable will be populated.
+On the first run, if the `.env` file isn't created, it will be created and the
+`APP_KEY` variable will be populated.
 
-To see an example of running koel and a database with docker-compose, check out
-the [`./docker-compose.yml`][compose] file.
+Compose
+-------
+
+[docker-compose] can be used to start koel along with its depdencies. Just run.
+
+  docker-compose up
+
+On the first start, the database needs to be initialized. Run koel init with
+`docker exec` in the koel runtime container:
+
+  docker exec -it dockerkoel_koel_1 php artisan koel:init
+
+Check out the [`./docker-compose.yml`][compose] file for more information.
 
 [dbConfig]: https://github.com/phanan/koel/blob/baa5b7af13e7f66ff1d2df1778c65757a73e478f/config/database.php
 [koel]: https://koel.phanan.net/
 [compose]: ./docker-compose.yml
+
+[docker-compose]: https://docs.docker.com/compose/
 
 [automated-build-badge]: https://img.shields.io/docker/automated/0xcaff/koel.svg
 [docker-hub]: https://hub.docker.com/r/0xcaff/koel/
