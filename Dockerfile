@@ -2,7 +2,7 @@ FROM php:7.2.0-apache-stretch as builder
 
 # The version and repository to clone koel from.
 ARG KOEL_CLONE_SOURCE=https://github.com/phanan/koel.git
-ARG KOEL_VERSION_REF=v3.7.0
+ARG KOEL_VERSION_REF=v3.7.2
 
 # The version of php-composer to install.
 ARG COMPOSER_VERSION=1.1.2
