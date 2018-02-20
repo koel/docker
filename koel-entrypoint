@@ -12,22 +12,11 @@ if [ ! -f .env ]
 then
   echo ".env not present. bootstrapping..."
 
-  # Wait for database.
-  echo "waiting for database"
-  echo "${DB_HOST}:${DB_PORT}"
-  wait-for "${DB_HOST}:${DB_PORT}" --timeout=60
-  echo "database initialized"
-
-  # Setup Environment
-  echo "running koel:init"
-  php artisan koel:init
-  
   # For some reason key:generate (when called by koel:init or otherwise) doesn't
   # update the .env file causing sessions to not work. This fixes the problem by
   # generating and storing a key file.
   echo "generating app key"
   echo "APP_KEY=$(php artisan key:generate --show)" >> .env
-  
 else
   echo "environment file exists, skipping bootstrap"
 fi
