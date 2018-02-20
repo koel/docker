@@ -23,8 +23,9 @@ Compose
 
   docker-compose up
 
-On the first start, the database needs to be initialized. Run koel init with
-`docker exec` in the koel runtime container:
+On the first start (after an upgrade or initial installation), the database
+needs to be migrated. Run koel init with `docker exec` in the koel runtime
+container:
 
   docker exec -it dockerkoel_koel_1 php artisan koel:init
 
