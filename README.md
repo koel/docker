@@ -21,13 +21,13 @@ Compose
 
 [docker-compose] can be used to start koel along with its depdencies. Just run.
 
-  docker-compose up
+    docker-compose up
 
 On the first start (after an upgrade or initial installation), the database
 needs to be migrated. Run koel init with `docker exec` in the koel runtime
 container:
 
-  docker exec -it dockerkoel_koel_1 php artisan koel:init
+    docker exec -it dockerkoel_koel_1 php artisan koel:init
 
 Check out the [`./docker-compose.yml`][compose] file for more information.
 
