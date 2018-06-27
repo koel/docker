@@ -15,6 +15,7 @@ services:
       DB_DATABASE: koel
     volumes:
       - music:/music
+      - covers:/var/www/html/public/img/covers
 
   database:
     image: mysql/mysql-server:5.7
@@ -31,4 +32,7 @@ volumes:
     driver: local
 
   music:
+    driver: local
+
+  covers:
     driver: local

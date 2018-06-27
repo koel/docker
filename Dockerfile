@@ -83,6 +83,7 @@ ARG RUNTIME_DEPS="\
   libcurl4-openssl-dev \
   zlib1g-dev \
   libxml2-dev \
+  faad \
   ffmpeg"
 
 ARG PHP_RUNTIME_DEPS="\
