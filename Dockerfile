@@ -2,7 +2,7 @@ FROM php:7.2.0-apache-stretch as builder
 
 # The version and repository to clone koel from.
 ARG KOEL_CLONE_SOURCE=https://github.com/phanan/koel.git
-ARG KOEL_VERSION_REF=v3.7.2
+ARG KOEL_VERSION_REF=v4.1.0
 
 # The version of php-composer to install.
 ARG COMPOSER_VERSION=1.1.2
@@ -12,8 +12,9 @@ ARG NODE_VERSION=node_8.x
 
 # Install dependencies to install dependencies.
 RUN apt-get update && apt-get install --yes \
-  gnupg2=2.1.18-8~deb9u1 \
-  apt-transport-https=1.4.8
+  gnupg=2.1.18-8~deb9u4 \
+  apt-transport-https=1.4.9 \
+  libpng-dev=1.6.28-1+deb9u1
 
 # Add node repository.
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
@@ -53,25 +54,31 @@ RUN curl -sS https://getcomposer.org/installer \
 	chmod +x /usr/local/bin/composer && \
   composer --version
 
-ARG PHP_BUILD_DEPS="zip mbstring curl xml"
+ARG PHP_BUILD_DEPS="zip mbstring curl xml exif"
 
 # The repo version wasn't working so using docker-php-ext-install instead. Not
 # using docker-php-ext-install for every extension because it is badly
 # documented.
 RUN docker-php-ext-install ${PHP_BUILD_DEPS}
 
+# Create cache dirs for package managers and dependencies.
+RUN mkdir /var/www/.yarn && chown www-data:www-data /var/www/.yarn && \
+    mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer && \
+    mkdir /var/www/.cache && chown www-data:www-data /var/www/.cache
+
 # Change to a restricted user.
 USER www-data
 
 # Clone the koel repository.
-RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} /tmp/koel
+RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules /tmp/koel
 
 # Place artifacts here.
 WORKDIR /tmp/koel
 
 # Install runtime dependencies.
-RUN composer install
-RUN yarn install
+RUN composer install --no-dev --optimize-autoloader
+# Install and build static assets.
+RUN cd /tmp/koel/resources/assets && yarn install && cd /tmp/koel/ && yarn install && yarn run production
 
 # The runtime image.
 FROM php:7.2.0-apache-stretch
@@ -104,16 +111,12 @@ RUN apt-get update && \
 # Copy artifacts from build stage.
 COPY --from=builder /tmp/koel /var/www/html
 
-# Remove configuration file. All configuration should be passed in as
-# environment variables or a bind mounted file at runtime.
-RUN rm /var/www/html/.env
-
 # Koel makes use of Larvel's pretty URLs. This requires some additional
 # configuration: https://laravel.com/docs/4.2#pretty-urls
 COPY ./.htaccess /var/www/html
 
 # Fix permissions.
-RUN chown -R www-data:www-data /var/www/html
+RUN chown www-data:www-data /var/www/html/.htaccess
 RUN a2enmod rewrite
 
 # Setup bootstrap script.
