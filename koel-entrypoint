@@ -17,6 +17,7 @@ then
   # generating and storing a key file.
   echo "generating app key"
   echo "APP_KEY=$(php artisan key:generate --show)" >> .env
+  echo "STREAMING_METHOD=x-sendfile" >> .env
 else
   echo "environment file exists, skipping bootstrap"
 fi

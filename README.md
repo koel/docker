@@ -16,6 +16,12 @@ First start the koel server with a mysql database and music storage volume.
 On the first run, if the `.env` file isn't created, it will be created and the
 `APP_KEY` variable will be populated.
 
+If you provide your own `.env` file, please add the following variable to enable streaming:
+
+```
+STREAMING_METHOD=x-sendfile
+```
+
 Compose
 -------
 
