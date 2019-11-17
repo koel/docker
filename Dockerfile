@@ -88,6 +88,7 @@ FROM php:7.2.0-apache-stretch
 # contexts.
 ARG RUNTIME_DEPS="\
   libcurl4-openssl-dev \
+  libapache2-mod-xsendfile \
   zlib1g-dev \
   libxml2-dev \
   faad \
@@ -111,6 +112,9 @@ RUN apt-get update && \
 # Copy artifacts from build stage.
 COPY --from=builder /tmp/koel /var/www/html
 
+# Copy Apache configuration
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
+
 # Koel makes use of Larvel's pretty URLs. This requires some additional
 # configuration: https://laravel.com/docs/4.2#pretty-urls
 COPY ./.htaccess /var/www/html
@@ -118,6 +122,9 @@ COPY ./.htaccess /var/www/html
 # Fix permissions.
 RUN chown www-data:www-data /var/www/html/.htaccess
 RUN a2enmod rewrite
+
+# Music volume
+VOLUME ["/media"]
 
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/
