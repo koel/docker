@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   koel:
-    image: 0xcaff/koel
+    image: hyzual/koel
     depends_on:
       - database
     ports:
@@ -14,7 +14,7 @@ services:
       DB_PASSWORD: koel
       DB_DATABASE: koel
     volumes:
-      - music:/music
+      - music:/media
       - covers:/var/www/html/public/img/covers
 
   database:
