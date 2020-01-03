@@ -80,6 +80,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Install and build static assets.
 RUN cd /tmp/koel/resources/assets && yarn install && cd /tmp/koel/ && yarn install && yarn run production
 
+# TODO: Cleanup. Remove node modules, tests, cypress & everything non prod essential
+
 # The runtime image.
 FROM php:7.2.0-apache-stretch
 
@@ -109,19 +111,18 @@ RUN apt-get update && \
   docker-php-ext-install ${PHP_RUNTIME_DEPS} && \
   apt-get clean
 
-# Copy artifacts from build stage.
-COPY --from=builder /tmp/koel /var/www/html
-
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Koel makes use of Larvel's pretty URLs. This requires some additional
-# configuration: https://laravel.com/docs/4.2#pretty-urls
-COPY ./.htaccess /var/www/html
-
-# Fix permissions.
-RUN chown www-data:www-data /var/www/html/.htaccess
+# Deploy Apache configuration
 RUN a2enmod rewrite
+
+# Copy artifacts from build stage.
+COPY --from=builder --chown=www-data:www-data /tmp/koel /var/www/html
+
+# Koel makes use of Laravel's pretty URLs. This requires some additional
+# configuration https://laravel.com/docs/4.2#pretty-urls
+COPY --chown=www-data:www-data ./.htaccess /var/www/html
 
 # Music volume
 VOLUME ["/media"]

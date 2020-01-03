@@ -1,0 +1,126 @@
+file:
+  /media:
+    exists: true
+    mode: "0755"
+    owner: root
+    group: root
+    filetype: directory
+  /var/www/html:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/.htaccess:
+    exists: true
+    mode: "0664"
+    owner: www-data
+    group: www-data
+    filetype: file
+  /var/www/html/index.php:
+    exists: true
+    mode: "0644"
+    owner: www-data
+    group: www-data
+    filetype: file
+  # We should delete the node modules ! should not be accessible in prod
+  /var/www/html/node_modules:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/public:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/storage:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/storage/framework/cache:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/storage/framework/sessions:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/storage/framework/views:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+package:
+  faad:
+    installed: true
+    versions:
+    - 2.8.0~cvs20161113-1+deb9u2
+  ffmpeg:
+    installed: true
+    versions:
+    - 7:3.2.14-1~deb9u1
+  libapache2-mod-xsendfile:
+    installed: true
+    versions:
+    - 0.12-2
+  libcurl4-openssl-dev:
+    installed: true
+    versions:
+    - 7.52.1-5+deb9u9
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - 0.0.0.0
+service:
+  apache2:
+    enabled: true
+    running: true
+user:
+  www-data:
+    exists: true
+    uid: 33
+    gid: 33
+    groups:
+    - www-data
+    home: /var/www
+    shell: /usr/sbin/nologin
+group:
+  www-data:
+    exists: true
+    gid: 33
+process:
+  apache2:
+    running: true
+command:
+  php_version:
+    exec: "php -v"
+    exit-status: 0
+    stdout:
+    - "PHP 7.2.0"
+    stderr: [] 
+  artisan_env:
+    exec: "php artisan env"
+    exit-status: 0
+    stdout:
+    - "Current application environment: production"
+    stderr: []
+http:
+  http://localhost:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body:
+    - "<title>Koel</title>"
+ 
