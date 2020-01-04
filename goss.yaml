@@ -13,7 +13,6 @@ file:
     filetype: directory
   /var/www/html/.htaccess:
     exists: true
-    mode: "0664"
     owner: www-data
     group: www-data
     filetype: file
