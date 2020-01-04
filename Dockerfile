@@ -1,4 +1,4 @@
-FROM php:7.2.0-apache-stretch as builder
+FROM php:7.2.0-apache-stretch as php-builder
 
 # The version and repository to clone koel from.
 ARG KOEL_CLONE_SOURCE=https://github.com/phanan/koel.git
@@ -7,42 +7,20 @@ ARG KOEL_VERSION_REF=v4.1.0
 # The version of php-composer to install.
 ARG COMPOSER_VERSION=1.1.2
 
-# The version of nodejs to install.
-ARG NODE_VERSION=node_8.x
-
-# Install dependencies to install dependencies.
-RUN apt-get update && apt-get install --yes \
-  gnupg=2.1.18-8~deb9u4 \
-  apt-transport-https=1.4.9 \
-  libpng-dev=1.6.28-1+deb9u1
-
-# Add node repository.
-RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
-    | apt-key add - && \
-  echo "deb https://deb.nodesource.com/${NODE_VERSION} stretch main" \
-    | tee /etc/apt/sources.list.d/nodesource.list && \
-  echo "deb-src https://deb.nodesource.com/${NODE_VERSION} stretch main" \
-    | tee --append /etc/apt/sources.list.d/nodesource.list
-
-# Add yarn repository.
-RUN curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg \
-    | apt-key add - && \
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" \
-    | tee /etc/apt/sources.list.d/yarn.list
-
 # These are dependencies needed both at build time and at runtime.
 ARG RUNTIME_DEPS="\
   libxml2-dev \
   zlib1g-dev \
   libcurl4-openssl-dev"
 
-# Install dependencies.
-RUN apt-get update && \
-  apt-get install --yes \
-  nodejs \
-  yarn \
+# Install dependencies to install dependencies.
+RUN apt-get update && apt-get install --yes --no-install-recommends \
+  gnupg=2.1.18-8~deb9u4 \
+  apt-transport-https=1.4.9 \
+  libpng-dev=1.6.28-1+deb9u1 \
   git \
-  ${RUNTIME_DEPS}
+  ${RUNTIME_DEPS} && \
+  apt-get clean
 
 # Install composer from getcomposer.org. An apk package is only available in
 # edge (> 3.7).
@@ -62,8 +40,7 @@ ARG PHP_BUILD_DEPS="zip mbstring curl xml exif"
 RUN docker-php-ext-install ${PHP_BUILD_DEPS}
 
 # Create cache dirs for package managers and dependencies.
-RUN mkdir /var/www/.yarn && chown www-data:www-data /var/www/.yarn && \
-    mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer && \
+RUN mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer && \
     mkdir /var/www/.cache && chown www-data:www-data /var/www/.cache
 
 # Change to a restricted user.
@@ -77,10 +54,23 @@ WORKDIR /tmp/koel
 
 # Install runtime dependencies.
 RUN composer install --no-dev --optimize-autoloader
-# Install and build static assets.
-RUN cd /tmp/koel/resources/assets && yarn install && cd /tmp/koel/ && yarn install && yarn run production
 
-# TODO: Cleanup. Remove node modules, tests, cypress & everything non prod essential
+# Install and build frontend. Alpine 3.10 Needed for Node.js 10. Koel can't be built on Node 12.
+FROM alpine:3.10 as front-builder
+
+# Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
+RUN apk add --no-cache nodejs \
+    bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
+    yarn
+
+# Copy sources from php builder
+COPY --from=php-builder /tmp/koel /tmp/koel
+
+# Install and build static assets.
+RUN cd /tmp/koel/resources/assets && \
+    yarn install --non-interactive && \
+    cd /tmp/koel/ && \
+    yarn install --non-interactive && yarn run production
 
 # The runtime image.
 FROM php:7.2.0-apache-stretch
@@ -118,7 +108,7 @@ COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
 # Copy artifacts from build stage.
-COPY --from=builder --chown=www-data:www-data /tmp/koel /var/www/html
+COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 
 # Koel makes use of Laravel's pretty URLs. This requires some additional
 # configuration https://laravel.com/docs/4.2#pretty-urls
