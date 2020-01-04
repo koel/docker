@@ -22,25 +22,30 @@ file:
     owner: www-data
     group: www-data
     filetype: file
-  # We should delete the node modules ! should not be accessible in prod
   /var/www/html/node_modules:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: directory
-  /var/www/html/public:
+  /var/www/html/public/css/app.css:
     exists: true
-    mode: "0755"
+    mode: "0644"
     owner: www-data
     group: www-data
-    filetype: directory
-  /var/www/html/storage:
+    filetype: file
+  /var/www/html/public/img/logo.png:
     exists: true
-    mode: "0755"
+    mode: "0644"
     owner: www-data
     group: www-data
-    filetype: directory
+    filetype: file
+  /var/www/html/public/js/app.js:
+    exists: true
+    mode: "0644"
+    owner: www-data
+    group: www-data
+    filetype: file
   /var/www/html/storage/framework/cache:
     exists: true
     mode: "0755"
@@ -98,22 +103,22 @@ group:
   www-data:
     exists: true
     gid: 33
+command:
+  artisan_env:
+    exec: php artisan env
+    exit-status: 0
+    stdout:
+    - 'Current application environment: production'
+    stderr: []
+  php_version:
+    exec: php -v
+    exit-status: 0
+    stdout:
+    - PHP 7.2.0
+    stderr: []
 process:
   apache2:
     running: true
-command:
-  php_version:
-    exec: "php -v"
-    exit-status: 0
-    stdout:
-    - "PHP 7.2.0"
-    stderr: [] 
-  artisan_env:
-    exec: "php artisan env"
-    exit-status: 0
-    stdout:
-    - "Current application environment: production"
-    stderr: []
 http:
   http://localhost:
     status: 200
@@ -121,5 +126,4 @@ http:
     no-follow-redirects: false
     timeout: 5000
     body:
-    - "<title>Koel</title>"
- 
+    - <title>Koel</title>
