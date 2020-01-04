@@ -16,3 +16,7 @@ jobs:
       - name: Run goss tests
         # Sleep for 0.5 to let apache2 start
         run: GOSS_SLEEP=0.5 dgoss run hyzual/koel-dev:latest
+      - name: Trigger Docker Hub Auto Build
+        uses: zzzze/webhook-trigger@master
+        with:
+          webhook_url: ${{ secrets.DOCKER_HUB_WEBHOOK_URL }}
