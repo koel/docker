@@ -1,0 +1,18 @@
+
+name: Docker Image CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install goss and dgoss
+        uses: e1himself/goss-installation-action@v1
+        with:
+          # Goss release version to install
+          version: 'v0.3.9'
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag hyzual/koel-dev:latest
+      - name: Run goss tests
+        # Sleep for 0.5 to let apache2 start
+        run: GOSS_SLEEP=0.5 dgoss run hyzual/koel-dev:latest
