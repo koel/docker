@@ -16,6 +16,12 @@ file:
     owner: www-data
     group: www-data
     filetype: file
+  /var/www/html/artisan:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: file
   /var/www/html/index.php:
     exists: true
     mode: "0644"
@@ -23,11 +29,9 @@ file:
     group: www-data
     filetype: file
   /var/www/html/node_modules:
-    exists: true
-    mode: "0755"
-    owner: www-data
-    group: www-data
-    filetype: directory
+    exists: false
+  /var/www/html/resources/assets:
+    exists: false
   /var/www/html/public/css/app.css:
     exists: true
     mode: "0644"
@@ -110,12 +114,14 @@ command:
     stdout:
     - 'Current application environment: production'
     stderr: []
+    timeout: 0
   php_version:
     exec: php -v
     exit-status: 0
     stdout:
     - PHP 7.2.0
     stderr: []
+    timeout: 0
 process:
   apache2:
     running: true

@@ -66,11 +66,14 @@ RUN apk add --no-cache nodejs \
 # Copy sources from php builder
 COPY --from=php-builder /tmp/koel /tmp/koel
 
-# Install and build static assets.
+# Install, build frontend assets and then delete the sources to save disk space
 RUN cd /tmp/koel/resources/assets && \
     yarn install --non-interactive && \
     cd /tmp/koel/ && \
-    yarn install --non-interactive && yarn run production
+    yarn install --non-interactive && \
+    yarn run production && \
+    rm -rf /tmp/koel/node_modules \
+      /tmp/koel/resources/assets
 
 # The runtime image.
 FROM php:7.2.0-apache-stretch
