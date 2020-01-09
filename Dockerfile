@@ -17,7 +17,6 @@ ARG RUNTIME_DEPS="\
 RUN apt-get update && apt-get install --yes --no-install-recommends \
   gnupg=2.1.18-8~deb9u4 \
   apt-transport-https=1.4.9 \
-  libpng-dev=1.6.28-1+deb9u1 \
   git \
   ${RUNTIME_DEPS} && \
   apt-get clean
@@ -32,7 +31,7 @@ RUN curl -sS https://getcomposer.org/installer \
 	chmod +x /usr/local/bin/composer && \
   composer --version
 
-ARG PHP_BUILD_DEPS="zip mbstring curl xml exif"
+ARG PHP_BUILD_DEPS="zip exif"
 
 # The repo version wasn't working so using docker-php-ext-install instead. Not
 # using docker-php-ext-install for every extension because it is badly
@@ -89,14 +88,7 @@ ARG RUNTIME_DEPS="\
   faad \
   ffmpeg"
 
-ARG PHP_RUNTIME_DEPS="\
-  mbstring \
-  curl \
-  xml \
-  zip \
-  pdo \
-  pdo_mysql \
-  exif"
+ARG PHP_RUNTIME_DEPS="zip pdo_mysql exif"
 
 # Install dependencies.
 RUN apt-get update && \

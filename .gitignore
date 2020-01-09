@@ -1,2 +1,4 @@
 # Contains DB passwords
 .env.dev
+# Contains Koel APP Key and JWT secret
+.env.koel

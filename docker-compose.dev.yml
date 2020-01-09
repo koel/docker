@@ -19,6 +19,7 @@ services:
     volumes:
       - music:/media
       - covers:/var/www/html/public/img/covers
+      - ./.env.koel:/var/www/html/.env
 
   database:
     image: mysql/mysql-server:5.7
@@ -32,8 +33,5 @@ services:
 
 volumes:
   db:
-    driver: local
   music:
-    driver: local
   covers:
-    driver: local
