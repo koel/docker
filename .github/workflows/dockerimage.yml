@@ -14,8 +14,7 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag hyzual/koel-dev:latest
       - name: Run goss tests
-        # Sleep for 0.5 to let apache2 start
-        run: GOSS_SLEEP=0.5 dgoss run hyzual/koel-dev:latest
+        run: dgoss run hyzual/koel-dev:latest
       - name: Push the Docker image to Docker Hub
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
