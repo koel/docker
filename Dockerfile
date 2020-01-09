@@ -113,10 +113,6 @@ RUN a2enmod rewrite
 # Copy artifacts from build stage.
 COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 
-# Koel makes use of Laravel's pretty URLs. This requires some additional
-# configuration https://laravel.com/docs/4.2#pretty-urls
-COPY --chown=www-data:www-data ./.htaccess /var/www/html
-
 # Music volume
 VOLUME ["/media"]
 
