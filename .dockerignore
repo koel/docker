@@ -1,5 +1,6 @@
-.git
-.github/
-goss.yaml
-LICENSE
-README.md
+# Ignore everything
+*
+
+# Allow specific files
+!/apache.conf
+!/koel-entrypoint

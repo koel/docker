@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  koel:
+    build:
+      context: .
+    container_name: 'koeldev'
+    depends_on:
+      - database
+    ports:
+      - 80:80
+    env_file:
+      - .env.dev
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=database
+      - DB_DATABASE=koel
+      - DB_USERNAME=koel
+    volumes:
+      - music:/media
+      - covers:/var/www/html/public/img/covers
+
+  database:
+    image: mysql/mysql-server:5.7
+    env_file:
+      - .env.dev
+    environment:
+      - MYSQL_DATABASE=koel
+      - MYSQL_USER=koel
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
+    driver: local
+  music:
+    driver: local
+  covers:
+    driver: local
