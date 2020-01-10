@@ -75,7 +75,7 @@ RUN cd /tmp/koel/resources/assets && \
       /tmp/koel/resources/assets
 
 # The runtime image.
-FROM php:7.2.0-apache-stretch
+FROM php:7.2-apache-buster
 
 # These are dependencies needed both at build time and at runtime. This is
 # repeated because docker doesn't seem to have a way to share args across build

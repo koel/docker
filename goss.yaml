@@ -15,7 +15,7 @@ file:
     filetype: directory
   /var/www/html:
     exists: true
-    mode: "0755"
+    mode: "0777"
     owner: www-data
     group: www-data
     filetype: directory
@@ -81,19 +81,19 @@ package:
   faad:
     installed: true
     versions:
-    - 2.8.0~cvs20161113-1+deb9u2
+    - "2.8.8-3"
   ffmpeg:
     installed: true
     versions:
-    - 7:3.2.14-1~deb9u1
+    - "7:4.1.4-1~deb10u1"
   libapache2-mod-xsendfile:
     installed: true
     versions:
-    - 0.12-2
+    - "0.12-2"
   libcurl4-openssl-dev:
     installed: true
     versions:
-    - 7.52.1-5+deb9u9
+    - "7.64.0-4"
 port:
   tcp:80:
     listening: true
@@ -128,7 +128,7 @@ command:
     exec: php -v
     exit-status: 0
     stdout:
-    - PHP 7.2.0
+    - PHP 7.2.26
     stderr: []
     timeout: 0
 process:
