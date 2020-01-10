@@ -128,7 +128,7 @@ command:
     exec: php -v
     exit-status: 0
     stdout:
-    - PHP 7.2.26
+    - PHP 7.3.13
     stderr: []
     timeout: 0
 process:

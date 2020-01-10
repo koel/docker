@@ -75,26 +75,22 @@ RUN cd /tmp/koel/resources/assets && \
       /tmp/koel/resources/assets
 
 # The runtime image.
-FROM php:7.2-apache-buster
-
-# These are dependencies needed both at build time and at runtime. This is
-# repeated because docker doesn't seem to have a way to share args across build
-# contexts.
-ARG RUNTIME_DEPS="\
-  libcurl4-openssl-dev \
-  libapache2-mod-xsendfile \
-  zlib1g-dev \
-  libxml2-dev \
-  faad \
-  ffmpeg"
-
-ARG PHP_RUNTIME_DEPS="zip pdo_mysql exif"
+FROM php:7.3-apache-buster
 
 # Install dependencies.
 RUN apt-get update && \
-  apt-get install --yes ${RUNTIME_DEPS} && \
-  docker-php-ext-install ${PHP_RUNTIME_DEPS} && \
-  apt-get clean
+  apt-get install --yes --no-install-recommends \
+    libcurl4-openssl-dev \
+    libapache2-mod-xsendfile \
+    libzip-dev \
+    zip \
+    faad \
+    ffmpeg \
+  && docker-php-ext-install \
+    zip \
+    pdo_mysql \
+    exif \
+  && apt-get clean
 
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
