@@ -5,20 +5,11 @@ set -e
 # Change to program root directory.
 cd /var/www/html
 
-if [ ! -f .env ]
-then
-
-  echo ".env not present. bootstrapping..."
-  touch .env
-  chown www-data:www-data .env
-
-  # For some reason key:generate (when called by koel:init or otherwise) doesn't
-  # update the .env file causing sessions to not work. This fixes the problem by
-  # generating and storing a key file.
-  echo "generating app key"
-  echo "APP_KEY=$(php artisan key:generate --show)" >> .env
+if [[ -z "$APP_KEY" ]] && grep '^APP_KEY=$' .env ; then
+    echo "generating app key"
+    php artisan key:generate
 else
-  echo "environment file exists, skipping bootstrap"
+    echo "APP_KEY exists. Skipping key generation"
 fi
 
 # Run the next entrypoint in the chain.
