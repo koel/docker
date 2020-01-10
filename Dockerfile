@@ -64,11 +64,9 @@ FROM php:7.3-apache-buster
 # Install dependencies.
 RUN apt-get update && \
   apt-get install --yes --no-install-recommends \
-    libcurl4-openssl-dev \
     libapache2-mod-xsendfile \
     libzip-dev \
     zip \
-    faad \
     ffmpeg \
   && docker-php-ext-install \
     zip \
