@@ -1,4 +1,12 @@
 file:
+  .env:
+    exists: true
+    mode: "0644"
+    owner: www-data
+    group: www-data
+    filetype: file
+    contains:
+      - APP_KEY
   /media:
     exists: true
     mode: "0755"
@@ -13,6 +21,7 @@ file:
     filetype: directory
   /var/www/html/.htaccess:
     exists: true
+    mode: "0644"
     owner: www-data
     group: www-data
     filetype: file
