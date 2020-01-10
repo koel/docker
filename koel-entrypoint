@@ -2,22 +2,21 @@
 
 set -e
 
-# Setup ffmpeg path.
-export FFMPEG_PATH=$(which ffmpeg)
-
 # Change to program root directory.
 cd /var/www/html
 
 if [ ! -f .env ]
 then
+
   echo ".env not present. bootstrapping..."
+  touch .env
+  chown www-data:www-data .env
 
   # For some reason key:generate (when called by koel:init or otherwise) doesn't
   # update the .env file causing sessions to not work. This fixes the problem by
   # generating and storing a key file.
   echo "generating app key"
   echo "APP_KEY=$(php artisan key:generate --show)" >> .env
-  echo "STREAMING_METHOD=x-sendfile" >> .env
 else
   echo "environment file exists, skipping bootstrap"
 fi

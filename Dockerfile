@@ -108,6 +108,10 @@ COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 # Music volume
 VOLUME ["/media"]
 
+ENV FFMEPG_PATH=/usr/bin/ffmpeg \
+    MEDIA_PATH=/media \
+    STREAMING_METHOD=x-sendfile
+
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/
 ENTRYPOINT ["koel-entrypoint"]
