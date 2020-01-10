@@ -12,8 +12,25 @@ RUN apk add --no-cache composer \
 # Change to a restricted user.
 USER www-data
 
-# Clone the koel repository.
-RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules /tmp/koel
+# Shallow-clone the koel repository and remove anything not necessary for production
+RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules --single-branch --depth 1 /tmp/koel && \
+  cd /tmp/koel && \
+  rm -rf .editorconfig \
+    .eslintignore \
+    .git \
+    .gitattributes \
+    .github \
+    .gitignore \
+    .gitmodules \
+    .gitpod.dockerfile \
+    .gitpod.yml \
+    .travis.yml \
+    cypress \
+    cypress.json \
+    nitpick.json \
+    phpunit.xml \
+    resources/artifacts \
+    tests
 
 # Place artifacts here.
 WORKDIR /tmp/koel
