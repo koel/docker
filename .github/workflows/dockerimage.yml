@@ -15,9 +15,3 @@ jobs:
         run: docker build . --file Dockerfile --tag hyzual/koel-dev:latest
       - name: Run goss tests
         run: dgoss run hyzual/koel-dev:latest
-      - name: Push the Docker image to Docker Hub
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: hyzual/koel
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
