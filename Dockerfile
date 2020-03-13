@@ -1,4 +1,4 @@
-FROM php:7.3-alpine as php-builder
+FROM php:7.3.15-alpine as php-builder
 
 # The version and repository to clone koel from.
 ARG KOEL_CLONE_SOURCE=https://github.com/phanan/koel.git
@@ -43,7 +43,7 @@ FROM alpine:3.10 as front-builder
 
 # Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
 RUN apk add --no-cache nodejs \
-    bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
+    python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
     yarn
 
 # Copy sources from php builder
@@ -59,7 +59,7 @@ RUN cd /tmp/koel/resources/assets && \
       /tmp/koel/resources/assets
 
 # The runtime image.
-FROM php:7.3-apache-buster
+FROM php:7.3.15-apache-buster
 
 # Install dependencies.
 RUN apt-get update && \
