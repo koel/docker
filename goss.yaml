@@ -128,7 +128,7 @@ command:
     exec: php -v
     exit-status: 0
     stdout:
-    - PHP 7.3.13
+    - PHP 7.3.15
     stderr: []
     timeout: 0
 process:
