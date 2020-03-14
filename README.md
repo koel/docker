@@ -1,7 +1,7 @@
 docker-koel
 ===========
 
-[![docker-pulls-badge]][docker-hub] ![github-workflow-status]
+[![docker-pulls-badge]][docker-hub] ![Docker Hub publish](https://github.com/Hyzual/docker-koel/workflows/Docker%20Hub%20publish/badge.svg?branch=master)
 
 A docker image with only the bare essentials needed to run [koel]. It includes
 apache and a php runtime with required extensions.
@@ -127,6 +127,5 @@ Apache's root directory. All koel files will be here. If you `exec` into the con
 [mysql]: https://hub.docker.com/r/mysql/mysql-server
 [docker-compose]: https://docs.docker.com/compose/
 
-[github-workflow-status]: <https://img.shields.io/github/workflow/status/hyzual/docker-koel/Docker Image CI>
 [docker-pulls-badge]: <https://img.shields.io/docker/pulls/hyzual/koel>
 [docker-hub]: https://hub.docker.com/r/hyzual/koel
