@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 services:
   koel:
@@ -14,7 +14,7 @@ services:
       DB_PASSWORD: koel
       DB_DATABASE: koel
     volumes:
-      - music:/media
+      - music:/music
       - covers:/var/www/html/public/img/covers
 
   database:
@@ -30,9 +30,7 @@ services:
 volumes:
   db:
     driver: local
-
   music:
     driver: local
-
   covers:
     driver: local

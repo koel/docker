@@ -66,7 +66,7 @@ docker run -d --name koel --env-file .koel.env -p 80:80 hyzual/koel
 
 ### Scan media folders
 
-Whenever the music in `/media` changes, you will need to manually scan it before
+Whenever the music in `/music` changes, you will need to manually scan it before
 koel is able to play it. Run the following command:
 
 ```bash
@@ -104,9 +104,9 @@ See [`.env.example`][koel-env-example] for reference.
 
 ## Volumes
 
-### /media
+### /music
 
-`/media` will contain the music library. Keep in mind that koel needs to
+`/music` will contain the music library. Keep in mind that koel needs to
 scan music before it's able to play it.
 
 ## Ports

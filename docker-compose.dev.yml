@@ -17,7 +17,7 @@ services:
       - DB_DATABASE=koel
       - DB_USERNAME=koel
     volumes:
-      - music:/media
+      - music:/music
       - covers:/var/www/html/public/img/covers
       - ./.env.koel:/var/www/html/.env
 
