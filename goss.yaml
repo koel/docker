@@ -7,7 +7,7 @@ file:
     filetype: file
     contains:
       - APP_KEY
-  /media:
+  /music:
     exists: true
     mode: "0755"
     owner: root

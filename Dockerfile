@@ -84,10 +84,10 @@ RUN a2enmod rewrite
 COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 
 # Music volume
-VOLUME ["/media"]
+VOLUME ["/music"]
 
 ENV FFMEPG_PATH=/usr/bin/ffmpeg \
-    MEDIA_PATH=/media \
+    MEDIA_PATH=/music \
     STREAMING_METHOD=x-sendfile
 
 # Setup bootstrap script.
