@@ -38,7 +38,7 @@ WORKDIR /tmp/koel
 # Install runtime dependencies.
 RUN composer install --no-dev --optimize-autoloader
 
-# Install and build frontend. Alpine 3.10 Needed for Node.js 10. Koel can't be built on Node 12.
+# Install and build frontend.
 FROM alpine:3.11.3 as front-builder
 
 # Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
