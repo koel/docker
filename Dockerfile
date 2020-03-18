@@ -86,7 +86,7 @@ COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 # Music volume
 VOLUME ["/music"]
 
-ENV FFMEPG_PATH=/usr/bin/ffmpeg \
+ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \
     STREAMING_METHOD=x-sendfile
 
