@@ -8,23 +8,85 @@ apache and a php runtime with required extensions.
 
 ## Usage
 
-Start the koel server with a [mysql] database and expose port 80.
+/!\ This container does not include a database. It **requires** another container to handle the database.
+
+Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
+
+docker-koel (this image) has only been tested with MySQL, so we'll use MySQL in examples below.
+
+
+### Run with docker-compose
+
+[docker-compose] is the easiest way to get started. It will start both the database container and this image.
+Clone this repository and edit `docker-compose.yml`. **Make sure to replace passwords !**
+
+Check out the [`./docker-compose.yml`][compose] file for more details.
+
+Then run docker-compose:
 
 ```bash
-docker run -d --name koel -p 80:80 hyzual/koel
+docker-compose up -d
 ```
 
-On the first run, you will need to generate `JWT_SECRET`, `APP_KEY`, create an admin user and initialize the database. Run the following command.
+### First run
+
+On the first run, you will need to:
+
+1. Generate `JWT_SECRET` and `APP_KEY`
+2. Create an admin user
+3. Initialize the database
+
+All these steps are achieved by running `koel:init` once:
+
+Replace `<container_name_for_koel>` in the command by the actual container name.
 
 ```bash
-docker exec -it koel bash
+docker exec -it <container_name_for_koel> bash
 # Once inside the container, you can run commands:
 $ php artisan koel:init
 ```
 
-`koel:init` will fail at the stage where it checks front-end assets. This is known and is due to the absence of node.js and yarn. koel's frontend assets are already built in this image so this step is not necessary.
+/!\ `koel:init` will fail at the stage where it checks front-end assets. This is known and is due to the absence of node.js and yarn. koel's frontend assets are already built in this image so this step is not necessary.
 
-koel's [`.env.example`][koel-env-example] file will be copied to `.env` in `/var/www/html`. It contains most of koel's configuration.
+
+### Run manually
+
+Create a docker network. It will be shared by Koel and its database.
+
+```bash
+docker network create --attachable koel-net
+```
+
+Create a database container. Here we will use [mysql].
+
+```bash
+docker run -d --name database \
+    -e MYSQL_ROOT_PASSWORD=<root_password> \
+    -e MYSQL_DATABASE=koel \
+    -e MYSQL_USER=koel \
+    -e MYSQL_PASSWORD=<koel_password> \
+    --network=koel-net \
+    -v koel_db:/var/lib/mysql \
+    mysql/mysql-server:5.7
+```
+
+Create the koel container on the same network so they can communicate
+
+```bash
+docker run -d --name koel \
+    -p 80:80 \
+    -e DB_CONNECTION=mysql \
+    -e DB_HOST=database \
+    -e DB_DATABASE=koel \
+    -e DB_USERNAME=koel \
+    -e DB_PASSWORD=<koel_password> \
+    --network=koel-net \
+    -v music:/music \
+    -v covers:/var/www/html/public/img/covers \
+    hyzual/koel
+```
+
+The same applies for the first run. See the [First run section](#first-run).
 
 ### How to bind-mount the `.env` file
 
@@ -34,7 +96,10 @@ To be sure to preserve `APP_KEY` and `JWT_SECRET`, you can choose to bind-mount 
 # On your host, create an `.env` file:
 touch .env
 # Then, you can bind-mount it directly in the container.
-docker run -d --name koel --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env hyzual/koel
+docker run -d --name koel \
+    -p 80:80 \
+    --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env \
+    hyzual/koel
 docker exec -it koel bash
 # In the container, init
 $ php artisan koel:init
@@ -59,9 +124,16 @@ $ exit
 You can then provide the variables to your real container:
 
 ```bash
-docker run -d --name koel --env APP_KEY=<your_app_key> --env JWT_SECRET=<your_secret> -p 80:80 hyzual/koel
+docker run -d --name koel \
+    -p 80:80 \
+    -e APP_KEY=<your_app_key> \
+    -e JWT_SECRET=<your_secret> \
+    hyzual/koel
 # Even better, write an env-file in your host and pass it to the container
-docker run -d --name koel --env-file .koel.env -p 80:80 hyzual/koel
+docker run -d --name koel \
+    -p 80:80 \
+    --env-file .koel.env \
+    hyzual/koel
 ```
 
 ### Scan media folders
@@ -73,29 +145,15 @@ koel is able to play it. Run the following command:
 docker exec koel php artisan koel:sync
 ```
 
-## Usage with docker-compose
--------
-
-[docker-compose] can be used to start koel along with its depdencies. Just run.
-
-```bash
-docker-compose up
-```
-
-On the first start (after an upgrade or initial installation), the database
-needs to be migrated. Run koel init with `docker exec` in the koel runtime
-container:
-
-```bash
-docker-compose exec koel php artisan koel:init
-```
-
-Check out the [`./docker-compose.yml`][compose] file for more information.
-
 ## Useful environment variables
 
 See [`.env.example`][koel-env-example] for reference.
 
+- `DB_CONNECTION`: `mysql` OR `pgsql` OR `sqlsrv` OR `sqlite-persistent`. Corresponds to the type of database being used with Koel.
+- `DB_HOST`: `database`. The name of the Docker container hosting the database. Koel needs to be on the same Docker network to find the database by its name.
+- `DB_USERNAME`: `koel`. If you change it, also change it in the database container.
+- `DB_PASSWORD`: The password credential matching `DB_USERNAME`. If you change it, also change it in the database.
+- `DB_DATABASE`: `koel`. The database name for Koel. If you change it, also change it in the database.
 - `APP_KEY`: a base64 string. It is generated by `php artisan koel:init` or by `php artisan key:generate`. Once you have scanned music, DO NOT CHANGE `APP_KEY`. Songs are identified by a combination of `APP_KEY` and their path, so if `APP_KEY` changes, the next `php artisan koel:scan` will report all songs as changed.
 - `JWT_SECRET`: a random 32-char string. It is generated by `php artisan koel:init` or by `php artisan koel:generate-jwt-secret`. DO NOT CHANGE `JWT_SECRET` once it is set. You will need it to login.
 - `FORCE_HTTPS`: if set to `true`, all URLs redirects done by koel will use `https`. If you have setup a reverse-proxy in front of this container that supports `https`, set it to `true`.
@@ -122,6 +180,7 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
 [koel-env-example]: https://github.com/phanan/koel/blob/v4.1.1/.env.example
+[koel-requirements]: https://koel.phanan.net/docs/#/?id=requirements
 [koel]: https://koel.phanan.net/
 [compose]: ./docker-compose.yml
 [mysql]: https://hub.docker.com/r/mysql/mysql-server
