@@ -11,7 +11,7 @@ services:
       DB_CONNECTION: mysql
       DB_HOST: database
       DB_USERNAME: koel
-      DB_PASSWORD: koel
+      DB_PASSWORD: <koel_password>
       DB_DATABASE: koel
     volumes:
       - music:/music
@@ -22,10 +22,10 @@ services:
     volumes:
       - db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: <root_password>
       MYSQL_DATABASE: koel
       MYSQL_USER: koel
-      MYSQL_PASSWORD: koel
+      MYSQL_PASSWORD: <koel_password>
 
 volumes:
   db:
