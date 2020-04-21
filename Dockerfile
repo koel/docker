@@ -1,8 +1,8 @@
 FROM php:7.3.15-alpine as php-builder
 
 # The version and repository to clone koel from.
-ARG KOEL_CLONE_SOURCE=https://github.com/phanan/koel.git
-ARG KOEL_VERSION_REF=v4.2.2
+ARG KOEL_CLONE_SOURCE=https://github.com/koel/koel.git
+ARG KOEL_VERSION_REF=v4.3.0
 
 # Install git and composer
 RUN apk add --no-cache composer \
