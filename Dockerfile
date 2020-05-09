@@ -1,4 +1,4 @@
-FROM php:7.3.15-alpine as php-builder
+FROM php:7.4.5-alpine as php-builder
 
 # The version and repository to clone koel from.
 ARG KOEL_CLONE_SOURCE=https://github.com/koel/koel.git
@@ -59,7 +59,7 @@ RUN cd /tmp/koel/resources/assets && \
       /tmp/koel/resources/assets
 
 # The runtime image.
-FROM php:7.3.15-apache-buster
+FROM php:7.4.5-alpine
 
 # Install dependencies.
 RUN apt-get update && \
