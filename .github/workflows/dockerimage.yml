@@ -11,9 +11,9 @@ jobs:
         uses: e1himself/goss-installation-action@v1
         with:
           # Goss release version to install
-          version: 'v0.3.9'
+          version: 'v0.3.11'
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag hyzual/koel-dev:latest
+        run: make build-docker-image
       - name: Run goss tests
-        run: dgoss run hyzual/koel-dev:latest
+        run: make dgoss-ci
