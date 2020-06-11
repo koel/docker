@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   koel:
-    image: hyzual/koel-dev:latest
+    image: hyzual/koel
     depends_on:
       - database
     ports:
