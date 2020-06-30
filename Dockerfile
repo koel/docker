@@ -68,10 +68,14 @@ RUN apt-get update && \
     libzip-dev \
     zip \
     ffmpeg \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+  && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
   && docker-php-ext-install \
     zip \
     pdo_mysql \
     exif \
+    gd \
   && apt-get clean
 
 # Copy Apache configuration
