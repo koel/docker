@@ -2,7 +2,7 @@
 
 all: build-docker-image
 
-build-docker-image: ## Builds the production Docker build-docker-image
+build-docker-image: ## Builds the production Docker build-docker-image for multiple platforms
 	docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64 . --file Dockerfile --tag hyzual/koel-dev:latest
 
 dgoss-ci: ## Run goss tests on the production Docker image
