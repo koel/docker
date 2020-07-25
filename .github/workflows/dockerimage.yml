@@ -14,6 +14,8 @@ jobs:
           # Goss release version to install
           version: 'v0.3.13'
       - uses: actions/checkout@v2
+      - name: install buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
       - name: Build the Docker image
         run: make build-docker-image
       - name: Run goss tests
