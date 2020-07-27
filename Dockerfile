@@ -43,7 +43,7 @@ FROM alpine:3.12.0 as front-builder
 
 # Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
 RUN apk add --no-cache nodejs \
-    python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
+    python2 python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
     yarn
 
 # Copy sources from php builder
