@@ -52,9 +52,9 @@ COPY --from=php-builder /tmp/koel /tmp/koel
 # Install, build frontend assets and then delete the sources to save disk space
 RUN cd /tmp/koel/resources/assets && \
     # Skip cypress download and installation. It is not needed for a production image
-    CYPRESS_INSTALL_BINARY=0 yarn install --non-interactive && \
-    cd /tmp/koel/ && \
     yarn install --non-interactive && \
+    cd /tmp/koel/ && \
+    CYPRESS_INSTALL_BINARY=0 yarn install --non-interactive && \
     yarn run production && \
     rm -rf /tmp/koel/node_modules \
       /tmp/koel/resources/assets
