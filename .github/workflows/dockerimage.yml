@@ -1,4 +1,3 @@
-
 name: Docker Image CI
 on:
   pull_request:
@@ -14,9 +13,11 @@ jobs:
           # Goss release version to install
           version: 'v0.3.13'
       - uses: actions/checkout@v2
+      - name: Build the x86_64 Docker image
+        run: make build-docker-image
+      - name: Run goss tests on x86_64 image
+        run: make dgoss-ci
       - name: install buildx
         uses: crazy-max/ghaction-docker-buildx@v1
-      - name: Build the Docker image
-        run: make build-docker-image
-      - name: Run goss tests
-        run: make dgoss-ci
+      - name: Build the Docker image for all supported architectures
+        run: make build-all-arch-docker-images
