@@ -17,13 +17,15 @@ jobs:
         uses: docker/build-push-action@v1.1.0
         with:
           push: false
+          repository: hyzual/koel
           tags: latest
       - name: Run goss tests on x86_64 image
-        run: make dgoss-ci
+        run: dgoss run hyzual/koel:latest
       - name: Build and push production image
         uses: zmingxie/docker_buildx@v1.1
         with:
           publish: true
           imageName: hyzual/koel
+          tag: latest
           dockerHubUser: ${{ secrets.DOCKER_HUB_USERNAME }}
           dockerHubPassword: ${{ secrets.DOCKER_HUB_PASSWORD }}
