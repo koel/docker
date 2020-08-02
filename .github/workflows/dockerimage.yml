@@ -18,6 +18,6 @@ jobs:
         uses: docker/build-push-action@v1.1.0
         with:
           push: false
-          tags: hyzual/koel-dev:latest
+          tags: latest
       - name: Run goss tests on x86_64 image
         run: make dgoss-ci
