@@ -1,4 +1,4 @@
-name: Docker Hub publish
+name: Run tests and deploy image
 on:
   push:
     branches: [master]
@@ -10,15 +10,20 @@ jobs:
         uses: e1himself/goss-installation-action@v1
         with:
           # Goss release version to install
-          version: 'v0.3.13'
-      - uses: actions/checkout@v2
+          version: "v0.3.13"
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Build the x86_64 Docker image
-        run: make build-docker-image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          push: false
+          tags: hyzual/koel:latest
       - name: Run goss tests on x86_64 image
         run: make dgoss-ci
-      - name: Push the Docker image
-        uses: elgohr/Publish-Docker-Github-Action@master
+      - name: Build and push production image
+        uses: zmingxie/docker_buildx@v1.1
         with:
-          name: hyzual/koel
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          publish: true
+          imageName: hyzual/koel
+          dockerHubUser: ${{ secrets.DOCKER_HUB_USERNAME }}
+          dockerHubPassword: ${{ secrets.DOCKER_HUB_PASSWORD }}
