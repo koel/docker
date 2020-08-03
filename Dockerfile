@@ -43,7 +43,7 @@ FROM alpine:3.12.0 as front-builder
 
 # Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
 RUN apk add --no-cache nodejs \
-    python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
+    python2 python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
     yarn
 
 # Copy sources from php builder
@@ -52,7 +52,7 @@ COPY --from=php-builder /tmp/koel /tmp/koel
 # Install, build frontend assets and then delete the sources to save disk space
 RUN cd /tmp/koel/resources/assets && \
     # Skip cypress download and installation. It is not needed for a production image
-    yarn install --non-interactive && \
+    yarn install --non-interactive --network-timeout 100000 && \
     cd /tmp/koel/ && \
     CYPRESS_INSTALL_BINARY=0 yarn install --non-interactive && \
     yarn run production && \
