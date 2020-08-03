@@ -1,0 +1,38 @@
+name: Continuous testing and deployment
+on: [push, pull_request]
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install goss and dgoss
+        uses: e1himself/goss-installation-action@v1
+        with:
+          # Goss release version to install
+          version: "v0.3.13"
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build the Docker image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          push: false
+          repository: hyzual/koel
+          tags: test
+      - name: Run goss tests on the image
+        run: dgoss run hyzual/koel:test
+  deploy:
+    name: Deploy to Docker Hub
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and push production image
+        uses: zmingxie/docker_buildx@v1.1
+        with:
+          publish: true
+          imageName: hyzual/koel
+          tag: latest
+          dockerHubUser: ${{ secrets.DOCKER_HUB_USERNAME }}
+          dockerHubPassword: ${{ secrets.DOCKER_HUB_PASSWORD }}
