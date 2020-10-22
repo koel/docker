@@ -39,7 +39,7 @@ WORKDIR /tmp/koel
 RUN composer install --no-dev --optimize-autoloader
 
 # Install and build frontend.
-FROM alpine:3.12.0 as front-builder
+FROM alpine:3.12.1 as front-builder
 
 # Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
 RUN apk add --no-cache nodejs \
