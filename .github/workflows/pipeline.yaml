@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build the Docker image
-        uses: docker/build-push-action@v1.1.0
+        uses: docker/build-push-action@v2.0.1
         with:
           push: false
           repository: hyzual/koel
