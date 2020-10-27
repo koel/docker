@@ -17,7 +17,6 @@ jobs:
         with:
           push: false
           tags: hyzual/koel:test
-          platforms: linux/amd64
       - name: Run goss tests on the image
         run: dgoss run hyzual/koel:test
   deploy:
@@ -45,4 +44,4 @@ jobs:
         with:
           push: true
           tags: hyzual/koel:latest
-          platforms: ${{ steps.qemu.outputs.platforms }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
