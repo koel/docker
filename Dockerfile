@@ -35,16 +35,16 @@ RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules -
 # Place artifacts here.
 WORKDIR /tmp/koel
 
-# Install runtime dependencies.
+# Install koel composer dependencies.
 RUN composer install --no-dev --optimize-autoloader
 
 # Install and build frontend.
 FROM alpine:3.12.1 as front-builder
 
-# Add nodejs and yarn. bash and the other 8 deps are needed to build pngquant, which is a dev dependency for koel...
+# Add nodejs and yarn. python2, make and g++ are needed to build node-sass on ARM arch.
 RUN apk add --no-cache nodejs \
-    python2 python3 bash lcms2-dev libpng-dev gcc g++ make autoconf automake \
-    yarn
+    yarn \
+    python2 make g++
 
 # Copy sources from php builder
 COPY --from=php-builder /tmp/koel /tmp/koel
@@ -62,7 +62,7 @@ RUN cd /tmp/koel/resources/assets && \
 # The runtime image.
 FROM php:7.3.15-apache-buster
 
-# Install dependencies.
+# Install koel runtime dependencies.
 RUN apt-get update && \
   apt-get install --yes --no-install-recommends \
     libapache2-mod-xsendfile \
