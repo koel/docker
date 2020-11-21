@@ -82,6 +82,9 @@ RUN apt-get update && \
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
+COPY ./php.ini /usr/local/etc/php/php.ini-development
+COPY ./php.ini /usr/local/etc/php/php.ini-production
+
 # Deploy Apache configuration
 RUN a2enmod rewrite
 
