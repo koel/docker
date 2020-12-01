@@ -1,6 +1,6 @@
-.PHONY: all start setup
+.PHONY: all help start setup
 
-all: build-docker-image
+all: help
 
 build-docker-image: ## Builds the production x86_64 Docker image
 	docker build . --file Dockerfile --tag hyzual/koel-dev:latest
@@ -21,6 +21,7 @@ see-logs: ## Tail -f laravel logs
 	docker exec -it koeldev tail -f storage/logs/laravel.log
 
 start: ## Build and start the DEV docker-compose stack
+	touch ./.env.koel ./.env.dev # Create the .env files first, otherwise docker-compose is not happy
 	docker-compose -f docker-compose.dev.yml up -d --build
 	@echo "Go to http://localhost"
 
