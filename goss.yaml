@@ -10,8 +10,8 @@ file:
   /music:
     exists: true
     mode: "0755"
-    owner: root
-    group: root
+    owner: www-data
+    group: www-data
     filetype: directory
   /var/www/html:
     exists: true

@@ -77,7 +77,10 @@ RUN apt-get update && \
     pdo_mysql \
     exif \
     gd \
-  && apt-get clean
+  && apt-get clean \
+  # Create the music volume so it has the correct permissions
+  && mkdir /music \
+  && chown www-data:www-data /music
 
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
@@ -93,6 +96,9 @@ RUN a2enmod rewrite
 COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
 
 # Music volume
+# This needs to be AFTER creating the folders and setting their permissions
+# and AFTER changing to non-root user.
+# Otherwise, they are owned by root and the user cannot write to them.
 VOLUME ["/music"]
 
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
