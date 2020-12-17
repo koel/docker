@@ -39,7 +39,7 @@ WORKDIR /tmp/koel
 RUN composer install --no-dev --optimize-autoloader
 
 # Install and build frontend.
-FROM alpine:3.12.2 as front-builder
+FROM alpine:3.12.3 as front-builder
 
 # Add nodejs and yarn. python2, make and g++ are needed to build node-sass on ARM arch.
 RUN apk add --no-cache nodejs \
