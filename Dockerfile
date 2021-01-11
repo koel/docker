@@ -1,22 +1,18 @@
-FROM php:7.3.15-alpine as php-builder
+# Download koel's released archive
+FROM alpine:3.12.3 as release-downloader
 
-# The version and repository to clone koel from.
-ARG KOEL_CLONE_SOURCE=https://github.com/koel/koel.git
-ARG KOEL_VERSION_REF=v4.4.0
+# The koel version to download
+ARG KOEL_VERSION_REF=v5.0.2
 
-# Install git and composer
-RUN apk add --no-cache composer \
-    git \
-  && docker-php-ext-install exif
+# Install curl to download the release tar.gz
+RUN apk add --no-cache curl
 
-# Change to a restricted user.
-USER www-data
-
-# Shallow-clone the koel repository and remove anything not necessary for production
-RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules --single-branch --depth 1 /tmp/koel && \
-  cd /tmp/koel && \
-  rm -rf .editorconfig \
+# Download the koel release matching the version and remove anything not necessary for production
+RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
+  && cd /tmp/koel/ \
+  && rm -rf .editorconfig \
     .eslintignore \
+    .eslintrc \
     .git \
     .gitattributes \
     .github \
@@ -24,40 +20,21 @@ RUN git clone ${KOEL_CLONE_SOURCE} -b ${KOEL_VERSION_REF} --recurse-submodules -
     .gitmodules \
     .gitpod.dockerfile \
     .gitpod.yml \
-    .travis.yml \
+    composer.lock \
     cypress \
     cypress.json \
-    nitpick.json \
-    phpunit.xml \
-    resources/artifacts \
-    tests
-
-# Place artifacts here.
-WORKDIR /tmp/koel
-
-# Install koel composer dependencies.
-RUN composer install --no-dev --optimize-autoloader
-
-# Install and build frontend.
-FROM alpine:3.12.3 as front-builder
-
-# Add nodejs and yarn. python2, make and g++ are needed to build node-sass on ARM arch.
-RUN apk add --no-cache nodejs \
-    yarn \
-    python2 make g++
-
-# Copy sources from php builder
-COPY --from=php-builder /tmp/koel /tmp/koel
-
-# Install, build frontend assets and then delete the sources to save disk space
-RUN cd /tmp/koel/resources/assets && \
-    yarn install --non-interactive --network-timeout 100000 && \
-    cd /tmp/koel/ && \
-    # Skip cypress download and installation. It is not needed for a production image
-    CYPRESS_INSTALL_BINARY=0 yarn install --non-interactive && \
-    yarn run production && \
-    rm -rf /tmp/koel/node_modules \
-      /tmp/koel/resources/assets
+    nginx.conf.example \
+    package.json \
+    phpstan.neon.dist \
+    phpunit.xml.dist \
+    resources/artifacts/ \
+    resources/assets/ \
+    ruleset.xml \
+    tag.sh \
+    tests \
+    webpack.config.js \
+    webpack.mix.js \
+    yarn.lock
 
 # The runtime image.
 FROM php:7.3.15-apache-buster
@@ -72,11 +49,14 @@ RUN apt-get update && \
     libpng-dev \
     libjpeg62-turbo-dev \
   && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
+  # https://laravel.com/docs/8.x/deployment#server-requirements
+  # ctype, fileinfo, json, mbstring, openssl, PDO, tokenizer and xml are already activated in the base image
   && docker-php-ext-install \
-    zip \
-    pdo_mysql \
+    bcmath \
     exif \
     gd \
+    pdo_mysql \
+    zip \
   && apt-get clean \
   # Create the music volume so it has the correct permissions
   && mkdir /music \
@@ -92,8 +72,8 @@ COPY ./php.ini "$PHP_INI_DIR/php.ini"
 # Deploy Apache configuration
 RUN a2enmod rewrite
 
-# Copy artifacts from build stage.
-COPY --from=front-builder --chown=www-data:www-data /tmp/koel /var/www/html
+# Copy the downloaded release
+COPY --from=release-downloader --chown=www-data:www-data /tmp/koel /var/www/html
 
 # Music volume
 # This needs to be AFTER creating the folders and setting their permissions

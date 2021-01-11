@@ -21,12 +21,16 @@ see-logs: ## Tail -f laravel logs
 	docker exec -it koeldev tail -f storage/logs/laravel.log
 
 start: ## Build and start the DEV docker-compose stack
-	touch ./.env.koel ./.env.dev # Create the .env files first, otherwise docker-compose is not happy
+	# Create the .env files first, otherwise docker-compose is not happy
+	touch ./.env.koel ./.env.dev || true
 	docker-compose -f docker-compose.dev.yml up -d --build
 	@echo "Go to http://localhost"
 
 dgoss-dev: ## Run goss tests on the dev docker-compose stack
 	dgoss run docker-koel_koel:latest
+
+dgoss-edit: ## Edit the goss tests on the dev docker-compose stack
+	dgoss edit docker-koel_koel:latest
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

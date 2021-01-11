@@ -5,11 +5,17 @@ set -e
 # Change to program root directory.
 cd /var/www/html
 
-if [[ -z "$APP_KEY" ]] && grep '^APP_KEY=$' .env ; then
-    echo "generating app key"
-    php artisan key:generate
-else
+# Fix permissions for the cache directory because running php artisan koel:sync can set them to root
+mkdir -p storage/framework/cache/data/
+chown www-data:www-data storage/framework/cache/data/
+
+if [[ -n "$APP_KEY" ]] || [[ -s .env ]] ; then
     echo "APP_KEY exists. Skipping key generation"
+else
+    echo "generating app key"
+    echo 'APP_KEY=' >> .env
+    chown www-data:www-data .env
+    php artisan key:generate
 fi
 
 # Run the next entrypoint in the chain.
