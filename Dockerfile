@@ -37,7 +37,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     yarn.lock
 
 # The runtime image.
-FROM php:7.3.15-apache-buster
+FROM php:8.0.1-apache-buster
 
 # Install koel runtime dependencies.
 RUN apt-get update && \
