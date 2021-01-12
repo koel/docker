@@ -37,7 +37,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     yarn.lock
 
 # The runtime image.
-FROM php:7.3.15-apache-buster
+FROM php:7.4.14-apache-buster
 
 # Install koel runtime dependencies.
 RUN apt-get update && \
@@ -48,7 +48,7 @@ RUN apt-get update && \
     ffmpeg \
     libpng-dev \
     libjpeg62-turbo-dev \
-  && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
+  && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, PDO, tokenizer and xml are already activated in the base image
   && docker-php-ext-install \
