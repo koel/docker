@@ -75,11 +75,11 @@ RUN a2enmod rewrite
 # Copy the downloaded release
 COPY --from=release-downloader --chown=www-data:www-data /tmp/koel /var/www/html
 
-# Music volume
-# This needs to be AFTER creating the folders and setting their permissions
+# Volumes for the music files and search index
+# This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
 # Otherwise, they are owned by root and the user cannot write to them.
-VOLUME ["/music"]
+VOLUME ["/music", "/var/www/html/storage/search-indexes"]
 
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \

@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   koel:
@@ -19,6 +19,7 @@ services:
     volumes:
       - music:/music
       - covers:/var/www/html/public/img/covers
+      - search_index:/var/www/html/storage/search-indexes
       - ./.env.koel:/var/www/html/.env
 
   database:
@@ -35,3 +36,4 @@ volumes:
   db:
   music:
   covers:
+  search_index:

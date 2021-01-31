@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   koel:
@@ -16,6 +16,7 @@ services:
     volumes:
       - music:/music
       - covers:/var/www/html/public/img/covers
+      - search_index:/var/www/html/storage/search-indexes
 
   database:
     image: mysql/mysql-server:5.7
@@ -33,4 +34,6 @@ volumes:
   music:
     driver: local
   covers:
+    driver: local
+  search_index:
     driver: local

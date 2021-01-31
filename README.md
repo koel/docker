@@ -81,6 +81,7 @@ docker run -d --name koel \
     --network=koel-net \
     -v music:/music \
     -v covers:/var/www/html/public/img/covers \
+    -v search_index:/var/www/html/storage/search-indexes \
     hyzual/koel
 ```
 
@@ -140,6 +141,16 @@ Whenever the music in `/music` changes, you will need to manually scan it before
 docker exec koel php artisan koel:sync
 ```
 
+### Populate the search indexes
+
+If you were running a version of Koel prior to v5.0.2, the search mechanism has changed and needs a step to index songs, albums and artists. Run the following command:
+
+```bash
+docker exec koel php artisan koel:search:import
+```
+
+For all new songs, the search index will be automatically populated by `php artisan koel:sync`. No need to run the `php artisan koel:search:import` again :).
+
 ## Useful environment variables
 
 See [`.env.example`][koel-env-example] for reference.
@@ -158,8 +169,11 @@ See [`.env.example`][koel-env-example] for reference.
 
 ### /music
 
-`/music` will contain the music library. Keep in mind that koel needs to
-scan music before it's able to play it.
+`/music` will contain the music library. Keep in mind that koel needs to scan music before it's able to play it.
+
+### /var/www/html/storage/search-indexes
+
+`/var/www/html/storage/search-indexes` will contain the search indexes. Searching songs, albums and artists leverages this to provide results.
 
 ## Ports
 

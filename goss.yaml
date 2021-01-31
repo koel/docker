@@ -107,6 +107,13 @@ file:
     group: www-data
     filetype: directory
     contains: []
+  /var/www/html/storage/search-indexes:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+    contains: []
   /var/www/html/tests:
     exists: false
     contains: []
