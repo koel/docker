@@ -9,7 +9,7 @@ build-all-arch-docker-images: ## Builds the production Docker image for all supp
 	docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64 . --file Dockerfile --tag hyzual/koel-dev:latest
 
 koel-init: ## Create the APP_KEY for the DEV docker-compose stack
-	docker exec -it koeldev php artisan koel:init
+	docker exec -it koeldev php artisan koel:init --no-assets
 
 sync-music: ## Sync music from the /music volume with the database
 	docker exec -it koeldev php artisan koel:sync -v

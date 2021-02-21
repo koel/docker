@@ -42,10 +42,10 @@ Replace `<container_name_for_koel>` in the command by the actual container name.
 ```bash
 docker exec -it <container_name_for_koel> bash
 # Once inside the container, you can run commands:
-$ php artisan koel:init
+$ php artisan koel:init --no-assets
 ```
 
-/!\ `koel:init` will fail at the stage where it checks front-end assets. This is known and is due to the absence of node.js and yarn. koel's frontend assets are already built in this image so this step is not necessary.
+`--no-assets` option tells the init command to skip the build of front-end assets. They are already built by a Github Action in koel's repository, so this step is not necessary.
 
 ### Run manually
 
@@ -101,7 +101,7 @@ docker run -d --name koel \
     hyzual/koel
 docker exec -it koel bash
 # In the container, init
-$ php artisan koel:init
+$ php artisan koel:init --no-assets
 ```
 
 ### Pass environment variables
