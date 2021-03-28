@@ -2,7 +2,7 @@
 FROM alpine:3.13.3 as release-downloader
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v5.0.2
+ARG KOEL_VERSION_REF=v5.1.0
 
 # Install curl to download the release tar.gz
 RUN apk add --no-cache curl
@@ -60,7 +60,10 @@ RUN apt-get update && \
   && apt-get clean \
   # Create the music volume so it has the correct permissions
   && mkdir /music \
-  && chown www-data:www-data /music
+  && chown www-data:www-data /music \
+  # Create the search-indexes volume so it has the correct permissions
+  && mkdir -p /var/www/html/storage/search-indexes \
+  && chown www-data:www-data /var/www/html/storage/search-indexes
 
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
