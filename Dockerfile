@@ -2,7 +2,7 @@
 FROM alpine:3.13.3 as release-downloader
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v5.0.2
+ARG KOEL_VERSION_REF=v5.1.0
 
 # Install curl to download the release tar.gz
 RUN apk add --no-cache curl
