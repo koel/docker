@@ -1,7 +1,7 @@
 docker-koel
 ===========
 
-[![docker-pulls-badge]][docker-hub] ![Continuous testing and deployment](https://github.com/Hyzual/docker-koel/workflows/Continuous%20testing%20and%20deployment/badge.svg)
+[![docker-pulls-badge]][docker-hub] ![Continuous testing and deployment](https://github.com/koel/docker/workflows/Continuous%20testing%20and%20deployment/badge.svg)
 
 A docker image with only the bare essentials needed to run [koel]. It includes
 apache and a php runtime with required extensions.
