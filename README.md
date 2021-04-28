@@ -1,4 +1,4 @@
-docker-koel
+koel/docker
 ===========
 
 [![docker-pulls-badge]][docker-hub] ![Continuous testing and deployment](https://github.com/koel/docker/workflows/Continuous%20testing%20and%20deployment/badge.svg)
@@ -12,7 +12,7 @@ apache and a php runtime with required extensions.
 
 Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
 
-docker-koel (this image) has only been tested with MySQL, so we'll use MySQL in examples below.
+`koel/docker` (this image) has only been tested with MySQL, so we'll use MySQL in examples below.
 
 ### Run with docker-compose
 
@@ -46,6 +46,21 @@ $ php artisan koel:init --no-assets
 ```
 
 `--no-assets` option tells the init command to skip the build of front-end assets. They are already built by a Github Action in koel's repository, so this step is not necessary.
+
+### Default admin account
+
+⚠ From v5.1.0, Koel will no longer ask for a username, email and password for the admin account. Instead, it creates one automatically with the following credentials:
+
+```
+email: admin@koel.dev
+password: KoelIsCool
+```
+
+**Make sure to change this unsecure password** with the user interface (click on your profile picture) or by running the following command:
+
+```bash
+docker exec -it <container_name_for_koel> php artisan koel:admin:change-password
+```
 
 ### Run manually
 
@@ -138,7 +153,7 @@ docker run -d --name koel \
 Whenever the music in `/music` changes, you will need to manually scan it before koel is able to play it. Run the following command:
 
 ```bash
-docker exec koel php artisan koel:sync
+docker exec <container_name_for_koel> php artisan koel:sync
 ```
 
 ### Populate the search indexes
@@ -146,10 +161,10 @@ docker exec koel php artisan koel:sync
 If you were running a version of Koel prior to v5.0.2, the search mechanism has changed and needs a step to index songs, albums and artists. Run the following command:
 
 ```bash
-docker exec koel php artisan koel:search:import
+docker exec <container_name_for_koel> php artisan koel:search:import
 ```
 
-For all new songs, the search index will be automatically populated by `php artisan koel:sync`. No need to run the `php artisan koel:search:import` again :).
+For all new songs, the search index will be automatically populated by `php artisan koel:sync`. No need to run the `php artisan koel:search:import` again 🙂.
 
 ## Useful environment variables
 
@@ -187,7 +202,7 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
-[koel-env-example]: https://github.com/phanan/koel/blob/v5.0.2/.env.example
+[koel-env-example]: https://github.com/phanan/koel/blob/v5.1.1/.env.example
 [koel-requirements]: https://docs.koel.dev/#/?id=requirements
 [koel]: https://koel.dev/
 [compose]: ./docker-compose.yml
