@@ -1,10 +1,16 @@
 name: Continuous testing and deployment
+on:
+  push:
+    branches-ignore:
+     - 'dependabot/**'
+  pull_request_target:
+
 permissions: read-all
-on: [push, pull_request]
+
 jobs:
   test:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install goss and dgoss
         uses: e1himself/goss-installation-action@v1.0.3
@@ -23,9 +29,10 @@ jobs:
 
       - name: Run goss tests on the image
         run: dgoss run hyzual/koel:test
+
   deploy:
     name: Deploy to Docker Hub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [test]
     if: github.ref == 'refs/heads/master'
     steps:
