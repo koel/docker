@@ -34,7 +34,7 @@ jobs:
     name: Deploy to Docker Hub
     runs-on: ubuntu-20.04
     needs: [test]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
