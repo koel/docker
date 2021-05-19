@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  koel:
+    image: hyzual/koel
+    depends_on:
+      - database
+    ports:
+      - 80:80
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=database
+      - DB_USERNAME=koel
+      - DB_PASSWORD=<koel_password>
+      - DB_DATABASE=koel
+    volumes:
+      - music:/music
+      - covers:/var/www/html/public/img/covers
+      - search_index:/var/www/html/storage/search-indexes
+
+  database:
+    image: postgres:13
+    volumes:
+      - db:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_DB=koel
+      - POSTGRES_USER=koel
+      - POSTGRES_PASSWORD=<koel_password>
+
+volumes:
+  db:
+    driver: local
+  music:
+    driver: local
+  covers:
+    driver: local
+  search_index:
+    driver: local
