@@ -48,6 +48,7 @@ RUN apt-get update && \
     ffmpeg \
     libpng-dev \
     libjpeg62-turbo-dev \
+    libpq-dev \
   && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, PDO, tokenizer and xml are already activated in the base image
@@ -55,7 +56,10 @@ RUN apt-get update && \
     bcmath \
     exif \
     gd \
+    pdo \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     zip \
   && apt-get clean \
   # Create the music volume so it has the correct permissions
