@@ -6,25 +6,39 @@ koel/docker
 A docker image with only the bare essentials needed to run [koel]. It includes
 apache and a php runtime with required extensions.
 
+See the [Changelog](<./CHANGELOG.md>) to keep track of changes to the image.
+
 ## Usage
 
-/!\ This container does not include a database. It **requires** another container to handle the database.
+⚠ This container does not include a database. It **requires** another container to handle the database.
 
 Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
 
-`koel/docker` (this image) has only been tested with MySQL, so we'll use MySQL in examples below.
+`koel/docker` (this image) has been tested with MySQL and PostgreSQL.
 
-### Run with docker-compose
+### Run with docker-compose and MySQL
 
 [docker-compose] is the easiest way to get started. It will start both the database container and this image.
-Clone this repository and edit `docker-compose.yml`. **Make sure to replace passwords !**
+Clone this repository and edit `docker-compose.mysql.yml`. **Make sure to replace passwords !**
 
-Check out the [`./docker-compose.yml`][compose] file for more details.
+Check out the [`./docker-compose.mysql.yml`](<./docker-compose.mysql.yml>) file for more details.
 
-Then run docker-compose:
+Then run `docker-compose`:
 
 ```bash
-docker-compose up -d
+docker-compose -f ./docker-compose.mysql.yml up -d
+```
+
+### Run with docker-compose and PostgreSQL
+
+Clone this repository and edit `docker-compose.postgres.yml`. **Make sure to replace passwords !**
+
+Check out the [`./docker-compose.postgres.yml`](<./docker-compose.postgres.yml>) file for more details.
+
+Then run `docker-compose`:
+
+```bash
+docker-compose -f ./docker-compose.postgres.yml up -d
 ```
 
 ### First run
@@ -62,7 +76,7 @@ password: KoelIsCool
 docker exec -it <container_name_for_koel> php artisan koel:admin:change-password
 ```
 
-### Run manually
+### Run manually with MySQL
 
 Create a docker network. It will be shared by Koel and its database.
 
@@ -202,10 +216,9 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
-[koel-env-example]: https://github.com/phanan/koel/blob/v5.1.1/.env.example
+[koel-env-example]: https://github.com/koel/koel/blob/v5.1.3/.env.example
 [koel-requirements]: https://docs.koel.dev/#/?id=requirements
 [koel]: https://koel.dev/
-[compose]: ./docker-compose.yml
 [mysql]: https://hub.docker.com/r/mysql/mysql-server
 [docker-compose]: https://docs.docker.com/compose/
 
