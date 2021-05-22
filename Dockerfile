@@ -2,7 +2,7 @@
 FROM alpine:3.13.5 as release-downloader
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v5.1.3
+ARG KOEL_VERSION_REF=v5.1.4
 
 # Install curl to download the release tar.gz
 RUN apk add --no-cache curl
@@ -51,7 +51,7 @@ RUN apt-get update && \
     libpq-dev \
   && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
-  # ctype, fileinfo, json, mbstring, openssl, PDO, tokenizer and xml are already activated in the base image
+  # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
   && docker-php-ext-install \
     bcmath \
     exif \

@@ -8,3 +8,6 @@ Since this docker image only has one tag which is `latest`, there are no version
 ## 2021-05-22
 ### Added
 - Support of PostgreSQL
+
+### Changed
+- Bump to Koel v5.1.4
