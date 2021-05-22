@@ -56,8 +56,10 @@ RUN apt-get update && \
     bcmath \
     exif \
     gd \
+    pdo \
     pdo_mysql \
     pdo_pgsql \
+    pgsql \
     zip \
   && apt-get clean \
   # Create the music volume so it has the correct permissions
