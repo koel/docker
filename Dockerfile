@@ -49,6 +49,7 @@ RUN apt-get update && \
     libpng-dev \
     libjpeg62-turbo-dev \
     libpq-dev \
+    locales \
   && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
@@ -71,6 +72,13 @@ RUN apt-get update && \
 
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
+RUN \
+    echo "zh_CN.UTF-8 UTF-8" > /etc/locale.gen && \
+    /usr/sbin/locale-gen
+
+ENV LANG zh_CN.UTF-8
+ENV LANGUAGE zh_CN:en
+ENV LC_ALL zh_CN.UTF-8
 
 # Copy php.ini
 COPY ./php.ini "$PHP_INI_DIR/php.ini"
@@ -91,6 +99,7 @@ VOLUME ["/music", "/var/www/html/storage/search-indexes"]
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \
     STREAMING_METHOD=x-sendfile
+
 
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/
