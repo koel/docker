@@ -49,7 +49,6 @@ RUN apt-get update && \
     libpng-dev \
     libjpeg62-turbo-dev \
     libpq-dev \
-    tzdata \
     locales \
   && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
@@ -77,12 +76,9 @@ RUN \
     echo "zh_CN.UTF-8 UTF-8" > /etc/locale.gen && \
     /usr/sbin/locale-gen
 
-ENV TZ=Asia/Shanghai
 ENV LANG zh_CN.UTF-8
 ENV LANGUAGE zh_CN:en
 ENV LC_ALL zh_CN.UTF-8
-RUN \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Copy php.ini
 COPY ./php.ini "$PHP_INI_DIR/php.ini"
