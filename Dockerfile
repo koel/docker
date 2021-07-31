@@ -73,12 +73,12 @@ RUN apt-get update && \
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 RUN \
-    echo "zh_CN.UTF-8 UTF-8" > /etc/locale.gen && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     /usr/sbin/locale-gen
 
-ENV LANG zh_CN.UTF-8
-ENV LANGUAGE zh_CN:en
-ENV LC_ALL zh_CN.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # Copy php.ini
 COPY ./php.ini "$PHP_INI_DIR/php.ini"
