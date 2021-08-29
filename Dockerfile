@@ -31,6 +31,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     resources/assets/ \
     ruleset.xml \
     scripts/ \
+    tag.sh \
     tests \
     webpack.config.js \
     webpack.mix.js \
