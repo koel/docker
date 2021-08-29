@@ -1,9 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
+
+## 2021-08-29
+### Changed
+- Bump PHP version to 7.4.22
+
+### Fixed
+- Fixed a bug that prevented transcoding songs whose path had non-ascii characters in them. Thanks to [glynnt](https://github.com/glynnt) !
 
 ## 2021-07-27
 ### Changed

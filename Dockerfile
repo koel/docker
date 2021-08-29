@@ -41,16 +41,16 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
 FROM php:7.4.22-apache-buster
 
 # Install koel runtime dependencies.
-RUN apt-get update && \
-  apt-get install --yes --no-install-recommends \
+RUN apt-get update \
+  && apt-get install --yes --no-install-recommends \
     libapache2-mod-xsendfile \
     libzip-dev \
     zip \
     ffmpeg \
+    locales \
     libpng-dev \
     libjpeg62-turbo-dev \
     libpq-dev \
-    locales \
   && docker-php-ext-configure gd --with-jpeg \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
@@ -69,17 +69,14 @@ RUN apt-get update && \
   && chown www-data:www-data /music \
   # Create the search-indexes volume so it has the correct permissions
   && mkdir -p /var/www/html/storage/search-indexes \
-  && chown www-data:www-data /var/www/html/storage/search-indexes
+  && chown www-data:www-data /var/www/html/storage/search-indexes \
+  # Set locale to prevent removal of non-ASCII path characters when transcoding with ffmpeg
+  # See https://github.com/koel/docker/pull/91
+  && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+  && /usr/sbin/locale-gen
 
 # Copy Apache configuration
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
-RUN \
-    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    /usr/sbin/locale-gen
-
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 
 # Copy php.ini
 COPY ./php.ini "$PHP_INI_DIR/php.ini"
@@ -99,8 +96,10 @@ VOLUME ["/music", "/var/www/html/storage/search-indexes"]
 
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \
-    STREAMING_METHOD=x-sendfile
-
+    STREAMING_METHOD=x-sendfile \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/
