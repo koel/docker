@@ -1,11 +1,11 @@
 let
   nixpkgs = fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/32bfa39ab4508e201939888e10feeecd61c25108.tar.gz";
-    sha256 = "050x039dvck8srka8iahdk40j6knrh52i3wjknmwx98q86kv29wq";
+    url = "https://github.com/NixOS/nixpkgs/archive/6cc260cfd60f094500b79e279069b499806bf6d8.tar.gz";
+    sha256 = "0vak6jmsd33a7ippnrypqmsga1blf3qzsnfy7ma6kqrpp9k26cf6";
   };
 in { pkgs ? import "${nixpkgs}" {} }:
 
-with pkgs; mkShell {
+with pkgs; mkShellNoCC {
     buildInputs = [
         docker-compose
         coreutils
