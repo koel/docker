@@ -3,7 +3,7 @@ on:
   push:
     branches-ignore:
      - 'dependabot/**'
-  pull_request_target:
+  pull_request:
 
 permissions: read-all
 
