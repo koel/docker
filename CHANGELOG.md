@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## 2021-09-27
+### Changed
+- Bump PHP version to 7.4.24
+
 ## 2021-09-07
 ### Changed
 - Bump PHP version to 7.4.23
