@@ -121,7 +121,7 @@ package:
   ffmpeg:
     installed: true
     versions:
-    - 7:4.1.6-1~deb10u1
+    - 7:4.1.8-0+deb10u1
   libapache2-mod-xsendfile:
     installed: true
     versions:
