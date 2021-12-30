@@ -2,5 +2,6 @@
 .env.dev
 # Contains Koel APP_KEY
 .env.koel
-# Cache for direnv and nix-direnv
+# Cache for direnv
 .direnv/
+.envrc
