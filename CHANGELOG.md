@@ -7,6 +7,7 @@ Since this docker image only has one tag which is `latest`, there are no version
 
 ## 2021-12-30
 ### Changed
+- Koel: 5.1.8 -> 5.1.12
 - Bump PHP version to 7.4.27
 
 ## 2021-11-08
