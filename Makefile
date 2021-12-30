@@ -12,7 +12,7 @@ koel-init: ## Create the APP_KEY for the DEV docker-compose stack
 	docker exec -it koeldev php artisan koel:init --no-assets
 
 sync-music: ## Sync music from the /music volume with the database
-	docker exec -it koeldev php artisan koel:sync -v
+	docker exec --user www-data -it koeldev php artisan koel:sync -v
 
 clear-cache: ## Clear caches that sometimes cause error 500
 	docker exec -it koeldev php artisan cache:clear

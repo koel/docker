@@ -54,7 +54,7 @@ All these steps are achieved by running `koel:init` once:
 Replace `<container_name_for_koel>` in the command by the actual container name.
 
 ```bash
-docker exec -it <container_name_for_koel> bash
+docker exec --user www-data -it <container_name_for_koel> bash
 # Once inside the container, you can run commands:
 $ php artisan koel:init --no-assets
 ```
@@ -128,7 +128,7 @@ docker run -d --name koel \
     -p 80:80 \
     --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env \
     hyzual/koel
-docker exec -it koel bash
+docker exec --user www-data -it koel bash
 # In the container, init
 $ php artisan koel:init --no-assets
 ```
@@ -167,7 +167,7 @@ docker run -d --name koel \
 Whenever the music in `/music` changes, you will need to manually scan it before koel is able to play it. Run the following command:
 
 ```bash
-docker exec <container_name_for_koel> php artisan koel:sync
+docker exec --user www-data <container_name_for_koel> php artisan koel:sync
 ```
 
 ### Populate the search indexes
@@ -175,7 +175,7 @@ docker exec <container_name_for_koel> php artisan koel:sync
 If you were running a version of Koel prior to v5.0.2, the search mechanism has changed and needs a step to index songs, albums and artists. Run the following command:
 
 ```bash
-docker exec <container_name_for_koel> php artisan koel:search:import
+docker exec --user www-data <container_name_for_koel> php artisan koel:search:import
 ```
 
 For all new songs, the search index will be automatically populated by `php artisan koel:sync`. No need to run the `php artisan koel:search:import` again 🙂.
