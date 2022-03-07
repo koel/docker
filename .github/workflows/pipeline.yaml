@@ -19,7 +19,7 @@ jobs:
           version: 'v0.3.16'
 
       - name: Checkout code
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: Build the Docker image
         uses: docker/build-push-action@v2.7.0
@@ -37,7 +37,7 @@ jobs:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1.2.0
