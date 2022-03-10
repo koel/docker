@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## 2022-03-10
+### Changed
+- Bump PHP version to 7.4.28
+
 ## 2022-01-18
 ### Changed
 - Koel: 5.1.12 -> 5.1.13
