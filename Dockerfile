@@ -1,5 +1,5 @@
 # Download koel's released archive
-FROM alpine:3.15.0 as release-downloader
+FROM alpine:3.15.2 as release-downloader
 
 # The koel version to download
 ARG KOEL_VERSION_REF=v5.1.13
