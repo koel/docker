@@ -8,6 +8,7 @@ Since this docker image only has one tag which is `latest`, there are no version
 ## 2022-04-15
 ### Changed
 - ⚠ BREAKING CHANGE: Image name has changed, it is now [`phanan/koel`](https://hub.docker.com/r/phanan/koel) instead of `hyzual/koel`.
+- Koel: 5.1.13 -> 5.1.14
 
 ## 2022-03-10
 ### Changed

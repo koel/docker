@@ -34,7 +34,7 @@ file:
     group: www-data
     filetype: file
     contains:
-    - v5.1.13
+    - v5.1.14
   /var/www/html/artisan:
     exists: true
     mode: "0755"

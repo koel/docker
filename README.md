@@ -8,6 +8,10 @@ apache and a php runtime with required extensions.
 
 See the [Changelog](<./CHANGELOG.md>) to keep track of changes to the image.
 
+## ⚠ Image changed to `phanan/koel` on 2022-04-15
+
+This repository no longer updates `hyzual/koel`. The latest version is now at [phanan/koel:latest][docker-hub].
+
 ## Usage
 
 ⚠ This container does not include a database. It **requires** another container to handle the database.
