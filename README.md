@@ -111,7 +111,7 @@ docker run -d --name koel \
     -v music:/music \
     -v covers:/var/www/html/public/img/covers \
     -v search_index:/var/www/html/storage/search-indexes \
-    hyzual/koel
+    phanan/koel
 ```
 
 The same applies for the first run. See the [First run section](#first-run).
@@ -127,7 +127,7 @@ touch .env
 docker run -d --name koel \
     -p 80:80 \
     --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env \
-    hyzual/koel
+    phanan/koel
 docker exec --user www-data -it koel bash
 # In the container, init
 $ php artisan koel:init --no-assets
@@ -139,7 +139,7 @@ Once you have generated an `APP_KEY` you can provide it as environment variables
 
 ```bash
 # Run a container just to generate the key
-docker run -it --rm hyzual/koel bash
+docker run -it --rm phanan/koel bash
 # In the container, generate APP_KEY
 $ php artisan key:generate --force
 # Show the modified .env file
@@ -154,12 +154,12 @@ You can then provide the variables to your real container:
 docker run -d --name koel \
     -p 80:80 \
     -e APP_KEY=<your_app_key> \
-    hyzual/koel
+    phanan/koel
 # Even better, write an env-file in your host and pass it to the container
 docker run -d --name koel \
     -p 80:80 \
     --env-file .koel.env \
-    hyzual/koel
+    phanan/koel
 ```
 
 ### Scan media folders
@@ -222,5 +222,5 @@ Apache's root directory. All koel files will be here. If you `exec` into the con
 [mysql]: https://hub.docker.com/r/mysql/mysql-server
 [docker-compose]: https://docs.docker.com/compose/
 
-[docker-pulls-badge]: <https://img.shields.io/docker/pulls/hyzual/koel>
-[docker-hub]: https://hub.docker.com/r/hyzual/koel
+[docker-pulls-badge]: <https://img.shields.io/docker/pulls/phanan/koel>
+[docker-hub]: https://hub.docker.com/r/phanan/koel

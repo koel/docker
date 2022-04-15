@@ -3,10 +3,10 @@
 all: help
 
 build-docker-image: ## Builds the production x86_64 Docker image
-	docker build . --file Dockerfile --tag hyzual/koel-dev:latest
+	docker build . --file Dockerfile --tag phanan/koel-dev:latest
 
 build-all-arch-docker-images: ## Builds the production Docker image for all supported processor architectures
-	docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64 . --file Dockerfile --tag hyzual/koel-dev:latest
+	docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64 . --file Dockerfile --tag phanan/koel-dev:latest
 
 koel-init: ## Create the APP_KEY for the DEV docker-compose stack
 	docker exec -it koeldev php artisan koel:init --no-assets

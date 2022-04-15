@@ -2,7 +2,7 @@ version: '3'
 
 services:
   koel:
-    image: hyzual/koel
+    image: phanan/koel
     depends_on:
       - database
     ports:
