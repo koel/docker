@@ -5,28 +5,16 @@ file:
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
   /var/www/html:
     exists: true
     mode: "0777"
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
-  /var/www/html/.env:
-    exists: true
-    mode: "0644"
-    owner: www-data
-    group: www-data
-    filetype: file
-    contains:
-    - APP_KEY
   /var/www/html/.git:
     exists: false
-    contains: []
   /var/www/html/.github:
     exists: false
-    contains: []
   /var/www/html/.version:
     exists: true
     mode: "0644"
@@ -34,98 +22,66 @@ file:
     group: www-data
     filetype: file
     contains:
-    - v5.1.14
+    - v6.0.2
   /var/www/html/artisan:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: file
-    contains: []
   /var/www/html/cypress:
     exists: false
-    contains: []
   /var/www/html/node_modules:
     exists: false
-    contains: []
   /var/www/html/public/.htaccess:
     exists: true
     mode: "0644"
     owner: www-data
     group: www-data
     filetype: file
-    contains: []
-  /var/www/html/public/css/app.css:
+  /var/www/html/public/build/assets:
     exists: true
-    mode: "0644"
+    mode: "0755"
     owner: www-data
     group: www-data
-    filetype: file
-    contains: []
-  /var/www/html/public/img/logo.png:
-    exists: true
-    mode: "0644"
-    owner: www-data
-    group: www-data
-    filetype: file
-    contains: []
+    filetype: directory
   /var/www/html/public/index.php:
     exists: true
     mode: "0644"
     owner: www-data
     group: www-data
     filetype: file
-    contains: []
-  /var/www/html/public/js/app.js:
-    exists: true
-    mode: "0644"
-    owner: www-data
-    group: www-data
-    filetype: file
-    contains: []
-  /var/www/html/resources/assets:
-    exists: false
-    contains: []
   /var/www/html/storage/framework/cache:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
   /var/www/html/storage/framework/sessions:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
   /var/www/html/storage/framework/views:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
   /var/www/html/storage/search-indexes:
     exists: true
     mode: "0755"
     owner: www-data
     group: www-data
     filetype: directory
-    contains: []
   /var/www/html/tests:
     exists: false
-    contains: []
 package:
   ffmpeg:
     installed: true
-    versions:
-    - 7:4.1.8-0+deb10u1
   libapache2-mod-xsendfile:
     installed: true
-    versions:
-    - 0.12-2
 port:
   tcp:80:
     listening: true
@@ -152,8 +108,7 @@ command:
   artisan_env:
     exec: php artisan env
     exit-status: 0
-    stdout:
-    - 'Current application environment: production'
+    stdout: ['/production/']
     stderr: []
     timeout: 0
 process:
