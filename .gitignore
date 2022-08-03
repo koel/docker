@@ -5,3 +5,4 @@
 # Cache for direnv
 .direnv/
 .envrc
+.idea/

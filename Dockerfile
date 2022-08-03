@@ -1,11 +1,11 @@
-# Download koel's released archive
-FROM alpine:3.15.4 as release-downloader
+# The runtime image.
+FROM php:8.1.8-apache-buster
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v5.1.14
+ARG KOEL_VERSION_REF=v6.0.2
 
-# Install curl to download the release tar.gz
-RUN apk add --no-cache curl
+# Install vim for easier editing/debugging
+RUN apt-get update && apt-get install -y vim
 
 # Download the koel release matching the version and remove anything not necessary for production
 RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
@@ -20,7 +20,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     .gitmodules \
     .gitpod.dockerfile \
     .gitpod.yml \
-    composer.lock \
+    api-docs \
     cypress \
     cypress.json \
     nginx.conf.example \
@@ -28,17 +28,11 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     phpstan.neon.dist \
     phpunit.xml.dist \
     resources/artifacts/ \
-    resources/assets/ \
     ruleset.xml \
     scripts/ \
     tag.sh \
     tests \
-    webpack.config.js \
-    webpack.mix.js \
-    yarn.lock
-
-# The runtime image.
-FROM php:7.4.28-apache-buster
+    vite.config.js
 
 # Install koel runtime dependencies.
 RUN apt-get update \
@@ -86,7 +80,8 @@ COPY ./php.ini "$PHP_INI_DIR/php.ini"
 RUN a2enmod rewrite
 
 # Copy the downloaded release
-COPY --from=release-downloader --chown=www-data:www-data /tmp/koel /var/www/html
+RUN cp -R /tmp/koel/. /var/www/html \
+  && chown -R www-data:www-data /var/www/html
 
 # Volumes for the music files and search index
 # This declaration must be AFTER creating the folders and setting their permissions
