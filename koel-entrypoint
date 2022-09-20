@@ -5,6 +5,12 @@ set -e
 # Change to program root directory.
 cd /var/www/html
 
+# Set X-SendFile path
+if [[ "$MEDIA_PATH" != "/music" ]]; then
+    echo "Updating XSendFilePath to $MEDIA_PATH"
+    sed --regexp-extended --in-place "s|XSendFilePath.+$|XSendFilePath $MEDIA_PATH|" /etc/apache2/sites-available/000-default.conf
+fi
+
 # Run the next entrypoint in the chain.
 echo "running docker-php-entrypoint with arguments $@"
 docker-php-entrypoint $@
