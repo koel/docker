@@ -2,7 +2,7 @@
 FROM php:8.1.8-apache-buster
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v6.3.0
+ARG KOEL_VERSION_REF=v6.4.0
 
 # Install vim for easier editing/debugging
 RUN apt-get update && apt-get install -y vim
