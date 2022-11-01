@@ -10,6 +10,7 @@ services:
     environment:
       - DB_CONNECTION=pgsql
       - DB_HOST=database
+      - DB_PORT=5432
       - DB_USERNAME=koel
       - DB_PASSWORD=<koel_password>
       - DB_DATABASE=koel
