@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Install goss and dgoss
-        uses: e1himself/goss-installation-action@v1.0.4
+        uses: e1himself/goss-installation-action@v1.1.0
         with:
           # Goss release version to install
           version: 'v0.3.16'
