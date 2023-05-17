@@ -221,7 +221,7 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
-[koel-env-example]: https://github.com/koel/koel/blob/v5.1.3/.env.example
+[koel-env-example]: https://github.com/koel/koel/blob/master/.env.example
 [koel-requirements]: https://docs.koel.dev/#/?id=requirements
 [koel]: https://koel.dev/
 [mysql]: https://hub.docker.com/r/mysql/mysql-server
