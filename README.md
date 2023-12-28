@@ -19,9 +19,9 @@ This repository no longer updates `hyzual/koel`. The latest version is now at [p
 
 Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
 
-`koel/docker` (this image) has been tested with MySQL and PostgreSQL.
+`koel/docker` (this image) has been tested with MariaDB/MySQL and PostgreSQL.
 
-### Run with docker-compose and MySQL
+### Run with docker-compose and MariaDB/MySQL
 
 [docker-compose] is the easiest way to get started. It will start both the database container and this image.
 Clone this repository and edit `docker-compose.mysql.yml`. **Make sure to replace passwords !**
@@ -79,7 +79,7 @@ $ php artisan koel:init --no-assets
 docker exec -it <container_name_for_koel> php artisan koel:admin:change-password
 ```
 
-### Run manually with MySQL
+### Run manually with MariaDB/MySQL
 
 Create a docker network. It will be shared by Koel and its database.
 
@@ -87,7 +87,7 @@ Create a docker network. It will be shared by Koel and its database.
 docker network create --attachable koel-net
 ```
 
-Create a database container. Here we will use [mysql].
+Create a database container. Here we will use [mariadb].
 
 ```bash
 docker run -d --name database \
@@ -97,7 +97,7 @@ docker run -d --name database \
     -e MYSQL_PASSWORD=<koel_password> \
     --network=koel-net \
     -v koel_db:/var/lib/mysql \
-    mysql/mysql-server:5.7
+    mariadb:10.11
 ```
 
 Create the koel container on the same network so they can communicate
@@ -224,7 +224,7 @@ Apache's root directory. All koel files will be here. If you `exec` into the con
 [koel-env-example]: https://github.com/koel/koel/blob/master/.env.example
 [koel-requirements]: https://docs.koel.dev/#/?id=requirements
 [koel]: https://koel.dev/
-[mysql]: https://hub.docker.com/r/mysql/mysql-server
+[mariadb]: https://hub.docker.com/r/mariadb/server
 [docker-compose]: https://docs.docker.com/compose/
 
 [docker-pulls-badge]: <https://img.shields.io/docker/pulls/phanan/koel>

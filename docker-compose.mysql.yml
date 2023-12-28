@@ -19,7 +19,7 @@ services:
       - search_index:/var/www/html/storage/search-indexes
 
   database:
-    image: mysql/mysql-server:5.7
+    image: mariadb:10.11
     volumes:
       - db:/var/lib/mysql
     environment:

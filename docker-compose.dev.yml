@@ -23,7 +23,7 @@ services:
       - ./.env.koel:/var/www/html/.env
 
   database:
-    image: mysql/mysql-server:5.7
+    image: mariadb:10.11
     env_file:
       - .env.dev
     environment:
