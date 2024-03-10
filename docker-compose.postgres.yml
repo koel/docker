@@ -21,7 +21,7 @@ services:
   database:
     image: postgres:13
     volumes:
-      - db:/var/lib/postgresql/data'
+      - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=koel
       - POSTGRES_USER=koel
