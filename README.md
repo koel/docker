@@ -185,7 +185,8 @@ For all new songs, the search index will be automatically populated by `php arti
 
 ## Useful environment variables
 
-See [`.env.example`][koel-env-example] for reference.
+> [!IMPORTANT]
+> This list is not exhaustive and may not be up-to-date. See [`.env.example`][koel-env-example] for a complete reference.
 
 - `DB_CONNECTION`: `mysql` OR `pgsql` OR `sqlsrv` OR `sqlite-persistent`. Corresponds to the type of database being used with Koel.
 - `DB_HOST`: `database`. The name of the Docker container hosting the database. Koel needs to be on the same Docker network to find the database by its name.
@@ -197,7 +198,6 @@ See [`.env.example`][koel-env-example] for reference.
 - `MEMORY_LIMIT`: The amount of memory in MB for the scanning process. Increase this value if `php artisan koel:sync` runs out of memory.
 - `LASTFM_API_KEY` and `LASTFM_API_SECRET`: Enables Last.fm integration. See https://docs.koel.dev/3rd-party.html#last-fm
 - `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`: Enables Spotify integration. See https://docs.koel.dev/3rd-party.html#spotify
-- `SCOUT_DRIVER`, `ALGOLIA_APP_ID`, `ALGOLIA_API_KEY`, `ALGOLIA_INDEX_NAME`, `MEILISEARCH_HOST`, `MEILISEARCH_KEY`: Configuration for Koel's [instant search](https://docs.koel.dev/#instant-search).
 
 ## Volumes
 
