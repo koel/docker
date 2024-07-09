@@ -16,6 +16,7 @@ services:
       - DB_HOST=database
       - DB_DATABASE=koel
       - DB_USERNAME=koel
+      - DB_PASSWORD=password
     volumes:
       - music:/music
       - covers:/var/www/html/public/img/covers
@@ -29,6 +30,8 @@ services:
     environment:
       - MYSQL_DATABASE=koel
       - MYSQL_USER=koel
+      - MYSQL_PASSWORD=password
+      - MARIADB_ROOT_PASSWORD=password
     volumes:
       - db:/var/lib/mysql
 

@@ -2,7 +2,7 @@
 FROM php:8.1.8-apache-buster
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v6.12.1
+ARG KOEL_VERSION_REF=v7.0.0
 
 # Install vim for easier editing/debugging
 RUN apt-get update && apt-get install -y vim
@@ -31,7 +31,6 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     ruleset.xml \
     scripts/ \
     tag.sh \
-    tests \
     vite.config.js
 
 # Install koel runtime dependencies.
