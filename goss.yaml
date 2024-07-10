@@ -21,7 +21,7 @@ file:
     owner: www-data
     group: www-data
     filetype: file
-    contains:
+    contents:
     - v7.0.0
   /var/www/html/artisan:
     exists: true
@@ -88,6 +88,7 @@ port:
 service:
   apache2:
     enabled: true
+    skip: false
     running: true
 user:
   www-data:
@@ -113,10 +114,10 @@ process:
   apache2:
     running: true
 http:
-  http://localhost:
+  http://localhost/sw.js:
     status: 200
     allow-insecure: false
     no-follow-redirects: false
     timeout: 5000
     body:
-    - <title>Koel</title>
+    - workbox
