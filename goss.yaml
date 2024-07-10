@@ -21,7 +21,7 @@ file:
     owner: www-data
     group: www-data
     filetype: file
-    contents:
+    contains:
     - v7.0.0
   /var/www/html/artisan:
     exists: true
