@@ -44,7 +44,8 @@ RUN apt-get update \
     libpng-dev \
     libjpeg62-turbo-dev \
     libpq-dev \
-  && docker-php-ext-configure gd --with-jpeg \
+    libwebp-dev \
+  && docker-php-ext-configure gd --with-jpeg --with-webp \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
   && docker-php-ext-install \
