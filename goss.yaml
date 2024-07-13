@@ -22,7 +22,7 @@ file:
     group: www-data
     filetype: file
     contains:
-    - v7.0.2
+    - v7.0.3
   /var/www/html/artisan:
     exists: true
     mode: "0755"
