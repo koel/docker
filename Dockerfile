@@ -36,6 +36,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
 # Install koel runtime dependencies.
 RUN apt-get update \
   && apt-get install --yes --no-install-recommends \
+    cron \
     libapache2-mod-xsendfile \
     libzip-dev \
     zip \
