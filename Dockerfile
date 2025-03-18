@@ -105,5 +105,5 @@ CMD ["apache2-foreground"]
 EXPOSE 80
 
 # Check that the homepage is displayed
-HEALTHCHECK --interval=5m --timeout=5s \
+HEALTHCHECK --start-period=30s --start-interval=5s --interval=5m --timeout=5s \
   CMD curl -f http://localhost/sw.js || exit 1
