@@ -10,7 +10,7 @@ permissions: read-all
 jobs:
   test:
     name: Run tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Install goss and dgoss
         uses: e1himself/goss-installation-action@v1.0.4
@@ -32,7 +32,7 @@ jobs:
 
   deploy:
     name: Deploy to Docker Hub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: [test]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
