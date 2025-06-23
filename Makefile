@@ -12,7 +12,7 @@ koel-init: ## Create the APP_KEY for the DEV docker-compose stack
 	docker exec -it koeldev php artisan koel:init --no-assets
 
 sync-music: ## Sync music from the /music volume with the database
-	docker exec --user www-data -it koeldev php artisan koel:sync -v
+	docker exec --user www-data -it koeldev php artisan koel:scan -v
 
 clear-cache: ## Clear caches that sometimes cause error 500
 	docker exec -it koeldev php artisan cache:clear
@@ -22,7 +22,7 @@ see-logs: ## Tail -f laravel logs
 
 start: ## Build and start the DEV docker-compose stack
 	# Create the .env files first, otherwise docker-compose is not happy
-	touch ./.env.koel ./.env.dev || true
+	[ -f .env.koel ] || touch .env.koel
 	docker-compose -f docker-compose.dev.yml up -d --build
 	@echo "Go to http://localhost"
 

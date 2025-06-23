@@ -1,8 +1,8 @@
 # The runtime image.
-FROM php:8.1.8-apache-buster
+FROM php:8.4.8-apache-bookworm
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v7.5.2
+ARG KOEL_VERSION_REF=v7.6.2
 
 # Install vim for easier editing/debugging
 RUN apt-get update && apt-get install -y vim
@@ -46,7 +46,8 @@ RUN apt-get update \
     libjpeg62-turbo-dev \
     libpq-dev \
     libwebp-dev \
-  && docker-php-ext-configure gd --with-jpeg --with-webp \
+    libavif-dev \
+  && docker-php-ext-configure gd --with-jpeg --with-webp --with-avif \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
   && docker-php-ext-install \
@@ -81,8 +82,9 @@ COPY ./php.ini "$PHP_INI_DIR/php.ini"
 RUN a2enmod rewrite
 
 # Copy the downloaded release
-RUN cp -R /tmp/koel/. /var/www/html \
-  && chown -R www-data:www-data /var/www/html
+RUN cp -R /tmp/koel/. /var/www/html
+RUN [ ! -f /var/www/html/public/manifest.json ] && cp /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json || true
+RUN chown -R www-data:www-data /var/www/html
 
 # Volumes for the music files and search index
 # This declaration must be AFTER creating the folders and setting their permissions
@@ -105,5 +107,5 @@ CMD ["apache2-foreground"]
 EXPOSE 80
 
 # Check that the homepage is displayed
-HEALTHCHECK --start-period=30s --start-interval=5s --interval=5m --timeout=5s \
+HEALTHCHECK --start-period=30s --interval=5m --timeout=5s \
   CMD curl -f http://localhost/sw.js || exit 1

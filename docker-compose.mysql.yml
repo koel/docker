@@ -17,6 +17,7 @@ services:
       - music:/music
       - covers:/var/www/html/public/img/covers
       - search_index:/var/www/html/storage/search-indexes
+      - ./sql:/docker-entrypoint-initdb.d
 
   database:
     image: mariadb:10.11

@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON koel.* TO 'koel'@'%' IDENTIFIED BY 'password';
+FLUSH PRIVILEGES;
