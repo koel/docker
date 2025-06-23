@@ -7,10 +7,14 @@ file:
     filetype: directory
   /var/www/html:
     exists: true
-    mode: "0777"
     owner: www-data
     group: www-data
     filetype: directory
+  /var/www/html/public/manifest.json:
+    exists: true
+    owner: www-data
+    group: www-data
+    filetype: file
   /var/www/html/.git:
     exists: false
   /var/www/html/.github:
