@@ -58,5 +58,5 @@ jobs:
         uses: docker/build-push-action@v3.2.0
         with:
           push: true
-          tags: phanan/koel:latest,phanan/koel:7.7.1
+          tags: phanan/koel:latest,phanan/koel:7.8.0
           platforms: linux/amd64,linux/arm64,linux/arm/v7
