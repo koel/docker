@@ -10,6 +10,11 @@ file:
     owner: www-data
     group: www-data
     filetype: directory
+  /tmp/koel:
+    exists: true
+    owner: www-data
+    group: www-data
+    filetype: directory
   /var/www/html/public/manifest.json:
     exists: true
     owner: www-data
