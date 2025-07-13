@@ -86,6 +86,11 @@ RUN cp -R /tmp/koel/. /var/www/html
 RUN [ ! -f /var/www/html/public/manifest.json ] && cp /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json || true
 RUN chown -R www-data:www-data /var/www/html
 
+# Create /tmp/koel if it doesn't exist, and set ownership to www-data
+RUN mkdir -p /tmp/koel \
+ && chown www-data:www-data /tmp/koel \
+ && chmod 755 /tmp/koel
+
 # Volumes for the music files and search index
 # This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
