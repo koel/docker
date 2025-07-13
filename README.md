@@ -3,12 +3,12 @@ koel/docker
 
 [![docker-pulls-badge]][docker-hub] ![Continuous testing and deployment](https://github.com/koel/docker/workflows/Continuous%20testing%20and%20deployment/badge.svg)
 
-A docker image with only the bare essentials needed to run [koel]. It includes apache and a php runtime with required extensions.
+A docker image with only the bare essentials needed to run [koel]. It includes Apache and a PHP runtime with required extensions.
+
+> [!IMPORTANT]
+> This container does not include a database. It **requires** another container to handle the database.
 
 ## Usage
-
-> **Warning**
-> This container does not include a database. It **requires** another container to handle the database.
 
 Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
 
@@ -121,15 +121,18 @@ The same applies for the first run. See the [First run section](#first-run).
 To be sure to preserve `APP_KEY` you can choose to bind-mount the `.env` file to your host:
 
 ```bash
-# On your host, create an `.env` file:
+# On your host, create an `.env` file
 touch .env
-# Then, you can bind-mount it directly in the container.
+
+# Then, you can bind-mount it directly in the container
 docker run -d --name koel \
     -p 80:80 \
     --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env \
     phanan/koel
+    
 docker exec --user www-data -it koel bash
-# In the container, init
+
+# In the container, run koel:init command with --no-assets flag
 $ php artisan koel:init --no-assets
 ```
 
@@ -144,7 +147,7 @@ docker run -it --rm phanan/koel bash
 $ php artisan key:generate --force
 # Show the modified .env file
 $ cat .env
-# Copy the APP_KEY variable
+# Copy the APP_KEY variable, and exit the container
 $ exit
 ```
 
@@ -219,9 +222,17 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
+## Help & Support
+
+If you run into any issues, check the [Koel documentation][koel-doc] first. 
+If you encounter a bug in Koel itself, open an issue in the [Koel repository][koel-repo].
+This repo’s issues are reserved for Docker-related questions and problems.
+
 [koel-env-example]: https://github.com/koel/koel/blob/master/.env.example
 [koel-requirements]: https://docs.koel.dev/guide/getting-started#requirements
 [koel]: https://koel.dev/
+[koel-doc]: https://docs.koel.dev/
+[koel-repo]: https://github.com/koel/koel
 [mariadb]: https://hub.docker.com/r/mariadb/server
 [docker-compose]: https://docs.docker.com/compose/
 
