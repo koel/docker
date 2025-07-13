@@ -2,7 +2,7 @@
 FROM php:8.4.8-apache-bookworm
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v7.10.2
+ARG KOEL_VERSION_REF=v7.10.3
 
 # Install vim for easier editing/debugging
 RUN apt-get update && apt-get install -y vim
