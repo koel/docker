@@ -1,0 +1,60 @@
+name: 🐛 Bug Report
+description: File a bug report.
+title: "[Bug]: "
+assignees:
+  - phanan
+body:
+  - type: checkboxes
+    id: is-docker-issue
+    attributes:
+      label: This is a Docker-related issue.
+      description: Please confirm that this issue is related to the Docker image of Koel. For issues related to Koel itself, use the [Koel issue template](https://github.com/koel/koel/issues/new?template=1-bug-report.yml)
+      options:
+        - label: I am filing a bug report related to the Docker image of Koel
+          required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: How do you trigger this bug? Please provide a step-by-step guide.
+      value: |
+        1.
+        2.
+        3.
+        4. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant logs found in `storage/logs/laravel.log` and/or browser console.
+  - type: input
+    id: koel-version
+    attributes:
+      label: Koel version
+    validations:
+      required: true
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
+      description: Any other information you think might be helpful.
+      value: |
+        - **Database**:
+        - **Browser & device**:
+        - **Additional context**:
