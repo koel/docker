@@ -1,9 +1,8 @@
-name: Continuous testing and deployment
+name: Release Docker image
 on:
   push:
-    branches-ignore:
-     - 'dependabot/**'
-  pull_request:
+    branches:
+      - release
 
 permissions: read-all
 
@@ -34,7 +33,6 @@ jobs:
     name: Deploy to Docker Hub
     runs-on: ubuntu-24.04
     needs: [test]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
