@@ -4,9 +4,6 @@ FROM php:8.4.8-apache-bookworm
 # The koel version to download
 ARG KOEL_VERSION_REF=v7.12.0
 
-# Install vim for easier editing/debugging
-RUN apt-get update && apt-get install -y vim
-
 # Download the koel release matching the version and remove anything not necessary for production
 RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
   && cd /tmp/koel/ \
@@ -47,6 +44,8 @@ RUN apt-get update \
     libpq-dev \
     libwebp-dev \
     libavif-dev \
+    # as well as vim for easier debugging and updating configs
+    vim \
   && docker-php-ext-configure gd --with-jpeg --with-webp --with-avif \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
@@ -91,11 +90,29 @@ RUN mkdir -p /tmp/koel \
  && chown www-data:www-data /tmp/koel \
  && chmod 755 /tmp/koel
 
-# Volumes for the music files and search index
+
+RUN mkdir -p /cache/img/artists \
+  && mkdir -p /cache/img/avatars \
+  && mkdir -p /cache/img/covers \
+  && mkdir -p /cache/img/playlists \
+  && chown -R www-data:www-data /cache \
+  && chmod -R 755 /cache
+
+# redirect public img storage into the cache
+RUN rm -r /var/www/html/public/img/artists \
+  && rm -r /var/www/html/public/img/avatars \
+  && rm -r /var/www/html/public/img/covers \
+  && rm -r /var/www/html/public/img/playlists \
+  && ln --symbolic /cache/img/artists /var/www/html/public/img/artists \
+  && ln --symbolic /cache/img/avatars /var/www/html/public/img/avatars \
+  && ln --symbolic /cache/img/covers /var/www/html/public/img/covers \
+  && ln --symbolic /cache/img/playlists /var/www/html/public/img/playlists
+
+# Volumes for the music files, search index and image cache
 # This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
 # Otherwise, they are owned by root and the user cannot write to them.
-VOLUME ["/music", "/var/www/html/storage/search-indexes"]
+VOLUME ["/music", "/var/www/html/storage/search-indexes", "/cache"]
 
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \
