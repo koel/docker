@@ -53,7 +53,7 @@ apache2-proxy \
 
 
 
-RUN adduser -S www-data -G www-data
+RUN adduser -S www-data -G www-data -h /var/www/ -H
 RUN mkdir -p /var/www/html && chown www-data:www-data /var/www/html
 USER www-data
 
@@ -107,12 +107,11 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
 
 # Install x-sendfile for apache2, fix home folder
 USER root
-RUN apk add --no-cache apache2-dev gcc musl-dev shadow \
+RUN apk add --no-cache apache2-dev gcc musl-dev \
   && curl -o mod_xsendfile.c https://tn123.org/mod_xsendfile/mod_xsendfile.c \
   && apxs -cia mod_xsendfile.c \
   && rm mod_xsendfile.* \
-  && usermod -d /var/www/ \
-  && apk del --no-cache apache2-dev gcc musl-dev shadow\
+  && apk del --no-cache apache2-dev gcc musl-dev \
   && mkdir /var/www/lib \
   && ln -s /usr/lib/apache2 /var/www/lib/apache2
 
