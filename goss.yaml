@@ -87,41 +87,35 @@ file:
 package:
   ffmpeg:
     installed: true
-  libapache2-mod-xsendfile:
-    installed: true
 port:
   tcp:80:
     listening: true
     ip:
     - 0.0.0.0
-service:
-  apache2:
-    enabled: true
-    skip: false
-    running: true
+  tcp:9000:
+    listening: true
+    ip:
+    - 127.0.0.1
 user:
   www-data:
     exists: true
-    uid: 33
-    gid: 33
+    uid: 102
+    gid: 82
     groups:
     - www-data
     home: /var/www
-    shell: /usr/sbin/nologin
+    shell: /sbin/nologin
 group:
   www-data:
     exists: true
-    gid: 33
+    gid: 82
 command:
   artisan_env:
-    exec: php artisan env
+    exec: php /var/www/html/artisan env
     exit-status: 0
     stdout: ['/production/']
     stderr: []
     timeout: 0
-process:
-  apache2:
-    running: true
 http:
   http://localhost/sw.js:
     status: 200

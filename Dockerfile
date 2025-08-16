@@ -105,13 +105,14 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
   && rm -rf /tmp/*
 
 
-# Install x-sendfile for apache2
+# Install x-sendfile for apache2, fix home folder
 USER root
-RUN apk add --no-cache apache2-dev gcc musl-dev \
+RUN apk add --no-cache apache2-dev gcc musl-dev shadow \
   && curl -o mod_xsendfile.c https://tn123.org/mod_xsendfile/mod_xsendfile.c \
   && apxs -cia mod_xsendfile.c \
   && rm mod_xsendfile.* \
-  && apk del --no-cache apache2-dev gcc musl-dev \
+  && usermod -d /var/www/ \
+  && apk del --no-cache apache2-dev gcc musl-dev shadow\
   && mkdir /var/www/lib \
   && ln -s /usr/lib/apache2 /var/www/lib/apache2
 
@@ -181,7 +182,7 @@ CMD [""]
 EXPOSE 80
 
 # Check that the homepage is displayed
-HEALTHCHECK --start-period=100m --interval=5m --timeout=5s \
+HEALTHCHECK --start-period=30s --interval=5m --timeout=5s \
   CMD curl -f http://localhost/sw.js || exit 1
 
   
