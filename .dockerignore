@@ -2,6 +2,7 @@
 *
 
 # Allow specific files
-!/apache.conf
+!/apache/*
 !/php.ini
 !/koel-entrypoint
+!/koel-init

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [[ -z "${SKIP_INIT}" ]]; then
+
+    if [[ -z "${OPTIMIZE_CONFIG}" ]]; then
+        echo "Config not optimized, if your config is locked in you can enable the OPTIMIZE_CONFIG option. Enabling this will optimize your config, but YOU WILL NOT BE ABLE TO MAKE CONFIG EDITS WITHOUT RESTARING THE CONTAINER"
+    else
+        echo "Optimizing config..."
+        php artisan config:cache
+    fi
+    
+    # Invoke the init script so database migrations run and the config is at least partially validated
+    echo "Running installer..."
+    php artisan koel:init --no-assets
+    php artisan koel:doctor
+else
+    echo "Skipped init, koel might not be able to run if it is misconfigured or your database is out of date. This should not be used outside of debugging or manual initial setups!"
+fi
