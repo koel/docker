@@ -103,7 +103,7 @@ user:
     gid: 82
     groups:
     - www-data
-    home: /var/www
+    home: /var/www/
     shell: /sbin/nologin
 group:
   www-data:
