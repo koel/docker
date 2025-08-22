@@ -1,10 +1,34 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
 # Change to program root directory.
 cd /var/www/html
 
-# Run the next entrypoint in the chain.
-echo "running docker-php-entrypoint with arguments $@"
-docker-php-entrypoint $@
+# Make sure all the cache folders exist
+echo "Creating cache directories if needed..."
+mkdir -p /cache/img/artists \
+  && mkdir -p /cache/img/avatars \
+  && mkdir -p /cache/img/covers \
+  && mkdir -p /cache/img/playlists \
+  && chown -R www-data:www-data /cache
+
+# start the cron daemon
+echo "Starting cron daemon..."
+crond
+
+echo "Starting php-fpm..."
+php-fpm83
+
+/usr/sbin/httpd -DFOREGROUND &
+
+# start apache, but background it while we run the doctor
+
+su -s '/bin/sh' -c "/usr/local/bin/koel-init" www-data
+
+# Run the actual passed start command
+$@
+
+#wait for all background processes to terminate
+wait
+
