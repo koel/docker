@@ -34,7 +34,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     vite.config.js \
     tests/songs/ \
     pnpm-lock.yaml \
-    .husky \
+    .husky/ \
     README.md \
     CODE_OF_CONDUCT.md \
     .vscode \
