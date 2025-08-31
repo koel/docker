@@ -104,7 +104,6 @@ RUN mkdir /music \
   && mkdir -p /images/radio-stations \
   && chown -R www-data:www-data /images \
   && chmod -R 755 /images \
-  # redirect public img storage into the cache, putting this here and not with the other koel file setups because it makes more sense here, and they are empty folder so don't have a significant impact on file size
   && rm -r /var/www/html/public/img/artists \
   && rm -r /var/www/html/public/img/avatars \
   && rm -r /var/www/html/public/img/covers \
