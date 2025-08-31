@@ -17,6 +17,10 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     .gitmodules \
     .gitpod.dockerfile \
     .gitpod.yml \
+    .cursor/ \
+    .junie/ \
+    .husky/ \
+    .vscode/ \
     api-docs \
     cypress \
     cypress.json \
@@ -28,7 +32,16 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     ruleset.xml \
     scripts/ \
     tag.sh \
-    vite.config.js
+    vite.config.js \
+    tests/songs/ \
+    pnpm-lock.yaml \
+    README.md \
+    CODE_OF_CONDUCT.md \
+    tailwind.config.js \
+    eslint.config.js \
+    postcss.config.cjs \
+    commitlint.config.js \
+    .htaccess.example
 
 # Install koel runtime dependencies.
 RUN apt-get update \
