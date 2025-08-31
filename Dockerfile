@@ -41,7 +41,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     tailwind.config.js \
     eslint.config.js \
     postcss.config.cjs \
-    commitling.config.js \
+    commitlint.config.js \
     .htaccess.example \
 
 # Install koel runtime dependencies.
