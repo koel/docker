@@ -32,7 +32,7 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     scripts/ \
     tag.sh \
     vite.config.js \
-    tests/songs \
+    tests/songs/ \
     pnpm-lock.yaml \
     .husky \
     README.md \
