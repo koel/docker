@@ -4,9 +4,6 @@ FROM php:8.4.8-apache-bookworm
 # The koel version to download
 ARG KOEL_VERSION_REF=v7.14.0
 
-# Install vim for easier editing/debugging
-RUN apt-get update && apt-get install -y vim
-
 # Download the koel release matching the version and remove anything not necessary for production
 RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
   && cd /tmp/koel/ \
@@ -47,6 +44,8 @@ RUN apt-get update \
     libpq-dev \
     libwebp-dev \
     libavif-dev \
+    # to have a simple editor
+    nano \
   && docker-php-ext-configure gd --with-jpeg --with-webp --with-avif \
   # https://laravel.com/docs/8.x/deployment#server-requirements
   # ctype, fileinfo, json, mbstring, openssl, tokenizer and xml are already activated in the base image
@@ -60,6 +59,7 @@ RUN apt-get update \
     pgsql \
     zip \
   && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* \
   # Create the music volume so it has the correct permissions
   && mkdir /music \
   && chown www-data:www-data /music \
