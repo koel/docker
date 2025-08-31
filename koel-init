@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [[ ! -f /var/www/html/.env ]]; then
+    echo "No .env file found in /var/www/html, please make sure to mount an .env config file to store the configuration, you can use the koel:init command for a guided setup"
+    echo ""
+    echo "See https://github.com/koel/docker?tab=readme-ov-file#the-koelinit-command for more information about the init command"
+    echo "See https://github.com/koel/koel/blob/master/.env.example for an example env file if you want to change other configuration options as well or do a manual setup"
+    exit 0
+fi
+
 if [[ -z "${SKIP_INIT}" ]]; then
 
     if [[ -z "${OPTIMIZE_CONFIG}" ]]; then
