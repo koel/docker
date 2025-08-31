@@ -91,7 +91,7 @@ port:
   tcp:80:
     listening: true
     ip:
-    - 0.0.0.0
+    - '::'
   tcp:9000:
     listening: true
     ip:
