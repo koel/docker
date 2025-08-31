@@ -109,10 +109,12 @@ RUN mkdir /music \
   && rm -r /var/www/html/public/img/avatars \
   && rm -r /var/www/html/public/img/covers \
   && rm -r /var/www/html/public/img/playlists \
+  && rm -r /var/www/html/public/img/radio-stations \
   && ln -s /images/artists /var/www/html/public/img/artists \
   && ln -s /images/avatars /var/www/html/public/img/avatars \
   && ln -s /images/covers /var/www/html/public/img/covers \
   && ln -s /images/playlists /var/www/html/public/img/playlists \
+  && ln -s /images/radio-stations /var/www/html/public/img/radio-stations \
   && ln -s /images/radio-stations /var/www/html/public/img/radio-stations 
 
 # Volumes for the music files and search index
