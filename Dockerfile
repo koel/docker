@@ -127,6 +127,7 @@ RUN mkdir -p /tmp/koel \
   && mkdir -p /cache/img/avatars \
   && mkdir -p /cache/img/covers \
   && mkdir -p /cache/img/playlists \
+  && mkdir -p /cache/img/radio-stations \
   && chown -R www-data:www-data /cache \
   && chmod -R 755 /cache \
   # redirect public img storage into the cache, putting this here and not with the other koel file setups because it makes more sense here, and they are empty folder so don't have a significant impact on file size
@@ -137,7 +138,8 @@ RUN mkdir -p /tmp/koel \
   && ln -s /cache/img/artists /var/www/html/public/img/artists \
   && ln -s /cache/img/avatars /var/www/html/public/img/avatars \
   && ln -s /cache/img/covers /var/www/html/public/img/covers \
-  && ln -s /cache/img/playlists /var/www/html/public/img/playlists
+  && ln -s /cache/img/playlists /var/www/html/public/img/playlists \
+  && ln -s /cache/img/radio-stations /var/www/html/public/img/radio-stations
 
 # Volumes for the music files, search index and image cache
 # This declaration must be AFTER creating the folders and setting their permissions

@@ -11,6 +11,7 @@ mkdir -p /cache/img/artists \
   && mkdir -p /cache/img/avatars \
   && mkdir -p /cache/img/covers \
   && mkdir -p /cache/img/playlists \
+  && mkdir -p /cache/img/radio-stations \
   && chown -R www-data:www-data /cache
 
 # start the cron daemon
