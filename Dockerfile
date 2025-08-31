@@ -6,6 +6,8 @@ ARG KOEL_VERSION_REF=v7.14.0
 
 # Download the koel release matching the version and remove anything not necessary for production
 RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
+  && chown www-data:www-data /tmp/koel \
+  && chmod 755 /tmp/koel \
   && cd /tmp/koel/ \
   && rm -rf .editorconfig \
     .eslintignore \
@@ -73,12 +75,6 @@ RUN apt-get update \
     zip \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
-  # Create the music volume so it has the correct permissions
-  && mkdir /music \
-  && chown www-data:www-data /music \
-  # Create the search-indexes volume so it has the correct permissions
-  && mkdir -p /var/www/html/storage/search-indexes \
-  && chown www-data:www-data /var/www/html/storage/search-indexes \
   # Set locale to prevent removal of non-ASCII path characters when transcoding with ffmpeg
   # See https://github.com/koel/docker/pull/91
   && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
@@ -99,16 +95,31 @@ RUN cp -R /tmp/koel/. /var/www/html
 RUN [ ! -f /var/www/html/public/manifest.json ] && cp /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json || true
 RUN chown -R www-data:www-data /var/www/html
 
-# Create /tmp/koel if it doesn't exist, and set ownership to www-data
-RUN mkdir -p /tmp/koel \
- && chown www-data:www-data /tmp/koel \
- && chmod 755 /tmp/koel
+RUN mkdir /music \
+  && chown www-data:www-data /music \
+  && mkdir -p /images/artists \
+  && mkdir -p /images/avatars \
+  && mkdir -p /images/covers \
+  && mkdir -p /images/playlists \
+  && mkdir -p /images/radio-stations \
+  && chown -R www-data:www-data /images \
+  && chmod -R 755 /images \
+  # redirect public img storage into the cache, putting this here and not with the other koel file setups because it makes more sense here, and they are empty folder so don't have a significant impact on file size
+  && rm -r /var/www/html/public/img/artists \
+  && rm -r /var/www/html/public/img/avatars \
+  && rm -r /var/www/html/public/img/covers \
+  && rm -r /var/www/html/public/img/playlists \
+  && ln -s /images/artists /var/www/html/public/img/artists \
+  && ln -s /images/avatars /var/www/html/public/img/avatars \
+  && ln -s /images/covers /var/www/html/public/img/covers \
+  && ln -s /images/playlists /var/www/html/public/img/playlists \
+  && ln -s /images/radio-stations /var/www/html/public/img/radio-stations 
 
 # Volumes for the music files and search index
 # This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
 # Otherwise, they are owned by root and the user cannot write to them.
-VOLUME ["/music", "/var/www/html/storage/search-indexes"]
+VOLUME ["/music", "/var/www/html/storage/search-indexes", "/images"]
 
 RUN cd /var/www/html \
   && php artisan route:cache \

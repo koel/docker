@@ -15,7 +15,7 @@ services:
       - DB_DATABASE=koel
     volumes:
       - music:/music
-      - covers:/var/www/html/public/img/covers
+      - images:/images
       - search_index:/var/www/html/storage/search-indexes
       - ./sql:/docker-entrypoint-initdb.d
 
