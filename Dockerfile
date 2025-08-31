@@ -31,7 +31,18 @@ RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/k
     ruleset.xml \
     scripts/ \
     tag.sh \
-    vite.config.js
+    vite.config.js \
+    tests/songs \
+    pnpm-lock.yaml \
+    .husky \
+    README.md \
+    CODE_OF_CONDUCT.md \
+    .vscode \
+    tailwind.config.js \
+    eslint.config.js \
+    postcss.config.cjs \
+    commitling.config.js \
+    .htaccess.example \
 
 # Install koel runtime dependencies.
 RUN apt-get update \
