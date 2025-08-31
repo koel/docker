@@ -97,6 +97,11 @@ RUN mkdir -p /tmp/koel \
 # Otherwise, they are owned by root and the user cannot write to them.
 VOLUME ["/music", "/var/www/html/storage/search-indexes"]
 
+RUN cd /var/www/html \
+  && php artisan route:cache \
+  && php artisan event:cache \
+  && php artisan view:cache
+
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
     MEDIA_PATH=/music \
     STREAMING_METHOD=x-sendfile \
