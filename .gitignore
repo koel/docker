@@ -1,7 +1,5 @@
 # Contains DB passwords
-.env.dev
-# Contains Koel APP_KEY
-.env.koel
+.env*
 # Cache for direnv
 .direnv/
 .envrc
