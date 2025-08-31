@@ -124,6 +124,7 @@ ENV FFMPEG_PATH=/usr/bin/ffmpeg \
 
 # Setup bootstrap script.
 COPY koel-entrypoint /usr/local/bin/
+COPY koel-init /usr/local/bin/
 ENTRYPOINT ["koel-entrypoint"]
 CMD ["apache2-foreground"]
 
