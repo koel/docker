@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [[ ! -f /var/www/html/.env ]]; then
+    echo "No .env file found in /var/www/html, please make sure to mount an .env config file to store the configuration, you can use the koel:init command for a guided setup"
+    echo ""
+    echo "See https://github.com/koel/docker?tab=readme-ov-file#the-koelinit-command for more information about the init command"
+    echo "See https://github.com/koel/koel/blob/master/.env.example for an example env file if you want to change other configuration options as well or do a manual setup"
+    exit 0
+fi
+
+if [[ -z "${SKIP_INIT}" ]]; then
+
+    if [[ -z "${OPTIMIZE_CONFIG}" ]]; then
+        echo "Config not optimized, if your config is locked in you can enable the OPTIMIZE_CONFIG option. Enabling this will optimize your config, but YOU WILL NOT BE ABLE TO MAKE CONFIG EDITS WITHOUT RESTARING THE CONTAINER"
+    else
+        echo "Optimizing config..."
+        # clear before caching, in case this is a container reboot and it was already cached from before
+        php artisan config:clear
+        php artisan config:cache
+    fi
+    
+    # Invoke the init script so database migrations run and the config is at least partially validated
+    echo "Running installer..."
+    php artisan koel:init --no-assets --no-interaction
+    php artisan koel:doctor
+else
+    echo "Skipped init, koel might not be able to run if it is misconfigured or your database is out of date. This should not be used outside of debugging or manual initial setups!"
+fi
