@@ -109,7 +109,7 @@ docker run -d --name koel \
     -e DB_PASSWORD=<koel_password> \
     --network=koel-net \
     -v music:/music \
-    -v covers:/var/www/html/public/img/covers \
+    -v image_storage:/var/www/html/public/img/storage \
     -v search_index:/var/www/html/storage/search-indexes \
     phanan/koel
 ```

@@ -19,7 +19,7 @@ services:
       - DB_PASSWORD=password
     volumes:
       - music:/music
-      - covers:/var/www/html/public/img/covers
+      - image_storage:/var/www/html/public/img/storage
       - search_index:/var/www/html/storage/search-indexes
       - ./.env.koel:/var/www/html/.env
       - ./sql:/docker-entrypoint-initdb.d
@@ -39,5 +39,5 @@ services:
 volumes:
   db:
   music:
-  covers:
+  image_storage:
   search_index:
