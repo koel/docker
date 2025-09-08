@@ -2,14 +2,6 @@
 
 set -e
 
-echo "Creating image directories if needed..."
-mkdir -p /images/artists \
-  && mkdir -p /images/avatars \
-  && mkdir -p /images/covers \
-  && mkdir -p /images/playlists \
-  && mkdir -p /images/radio-stations \
-  && chown  www-data:www-data /images/*
-
 # Change to program root directory.
 cd /var/www/html
 
