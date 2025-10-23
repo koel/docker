@@ -2,7 +2,7 @@
 FROM php:8.4.8-apache-bookworm
 
 # The koel version to download
-ARG KOEL_VERSION_REF=v7.15.1
+ARG KOEL_VERSION_REF=v8.0.0
 
 # Download the koel release matching the version and remove anything not necessary for production
 RUN curl -L https://github.com/koel/koel/releases/download/${KOEL_VERSION_REF}/koel-${KOEL_VERSION_REF}.tar.gz | tar -xz -C /tmp \
