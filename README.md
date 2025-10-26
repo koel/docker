@@ -41,6 +41,8 @@ docker-compose -f ./docker-compose.postgres.yml up -d
 
 ## The `koel:init` command
 
+This command is automatically ran when the container starts, but can be disabled if you want to do some manual adjustments first. As such it is often sufficient to provide the needed env variables to the container to setup koel.
+
 For the first installation and every subsequent upgrade, you will need to run the `koel:init` command, which handles migrations and other setup tasks.
 For instance, during the first run, this command will generate the `APP_KEY`, create the default admin user, and initialize the database. For subsequent runs, it will apply any new migrations and update the database schema as needed.
 
@@ -189,6 +191,7 @@ For all new songs, the search index will be automatically populated by `php arti
 > [!IMPORTANT]
 > This list is not exhaustive and may not be up-to-date. See [`.env.example`][koel-env-example] for a complete reference.
 
+- `SKIP_INIT` : set a value to prevent the container from automatically running the init script on startup
 - `DB_CONNECTION`: `mysql` OR `pgsql` OR `sqlsrv` OR `sqlite-persistent`. Corresponds to the type of database being used with Koel.
 - `DB_HOST`: `database`. The name of the Docker container hosting the database. Koel needs to be on the same Docker network to find the database by its name.
 - `DB_USERNAME`: `koel`. If you change it, also change it in the database container.
@@ -199,6 +202,7 @@ For all new songs, the search index will be automatically populated by `php arti
 - `MEMORY_LIMIT`: The amount of memory in MB for the scanning process. Increase this value if `php artisan koel:scan` runs out of memory.
 - `LASTFM_API_KEY` and `LASTFM_API_SECRET`: Enables Last.fm integration. See https://docs.koel.dev/3rd-party.html#last-fm
 - `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`: Enables Spotify integration. See https://docs.koel.dev/3rd-party.html#spotify
+- `OPTIMIZE_CONFIG` Preload and optimize the config. This disables your ability to do config edits while the container is running. If you enable this every config change will require a container restart to apply.
 
 ## Volumes
 
