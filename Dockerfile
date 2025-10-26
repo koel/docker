@@ -97,9 +97,9 @@ COPY ./php.ini "$PHP_INI_DIR/php.ini"
 RUN a2enmod rewrite
 
 # Copy the downloaded release
-RUN cp -R /tmp/koel/. /var/www/html
-RUN [ ! -f /var/www/html/public/manifest.json ] && cp /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json || true
-RUN chown -R www-data:www-data /var/www/html
+RUN cp -R /tmp/koel/. /var/www/html \
+  && mv /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json \
+  && chown -R www-data:www-data /var/www/html
 
 # Volumes for the music files and search index
 # This declaration must be AFTER creating the folders and setting their permissions
