@@ -7,4 +7,4 @@ cd /var/www/html
 
 # Run the next entrypoint in the chain.
 echo "running docker-php-entrypoint with arguments $@"
-docker-php-entrypoint $@
+exec docker-php-entrypoint $@
