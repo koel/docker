@@ -189,6 +189,10 @@ For all new songs, the search index will be automatically populated by `php arti
 > [!IMPORTANT]
 > This list is not exhaustive and may not be up-to-date. See [`.env.example`][koel-env-example] for a complete reference.
 
+> ⚠Notice! If you use official docker image, the default `ffmpeg`'s position is `/usr/bin/ffmpeg`.
+> 
+> You will need to change `FFMPEG_PATH`'s default value in [`.env.example`][koel-env-example] to correct it, or just comment this ENV.
+
 - `DB_CONNECTION`: `mysql` OR `pgsql` OR `sqlsrv` OR `sqlite-persistent`. Corresponds to the type of database being used with Koel.
 - `DB_HOST`: `database`. The name of the Docker container hosting the database. Koel needs to be on the same Docker network to find the database by its name.
 - `DB_USERNAME`: `koel`. If you change it, also change it in the database container.
