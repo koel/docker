@@ -8,7 +8,6 @@ if [[ ! -f /var/www/html/.env ]]; then
 fi
 
 if [[ -z "${SKIP_INIT}" ]]; then
-
     if [[ -z "${OPTIMIZE_CONFIG}" ]]; then
         echo "Config not optimized. You can optimize the config with `OPTIMIZE_CONFIG`. Note that this will prevent config modifications from being applied until the container is restarted."
     else
@@ -17,11 +16,10 @@ if [[ -z "${SKIP_INIT}" ]]; then
         php artisan config:clear
         php artisan config:cache
     fi
-    
+
     # Invoke the init script so database migrations run and the config is at least partially validated
     echo "Running installer..."
     php artisan koel:init --no-assets --no-interaction
-    php artisan koel:doctor
 else
     echo "Initialization skipped. koel might not work properly if it is misconfigured or if the database is out of date. This should not be used outside of debugging or manual initial setups!"
 fi
