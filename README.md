@@ -49,7 +49,7 @@ For instance, during the first run, this command will generate the `APP_KEY`, cr
 In order to run this command, you first need to `exec` into the container (replace `<container_name_for_koel>` with the name of your running Koel container):
 
 ```bash
-docker exec --user www-data -it <container_name_for_koel> bash
+docker exec --user www-data -it <container_name_for_koel> sh
 ```
 
 Once inside the container, run the `koel:init` command:

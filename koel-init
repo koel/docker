@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [[ ! -f /var/www/html/.env ]]; then
     echo "No .env file found in /var/www/html. Make sure to mount a .env file to store the configuration. You can use the koel:init command (see https://github.com/koel/docker#the-koelinit-command) for a guided setup."
