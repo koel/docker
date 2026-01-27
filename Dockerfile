@@ -148,7 +148,8 @@ USER www-data
 RUN cd /var/www/html \
   && php artisan route:cache \
   && php artisan event:cache \
-  && php artisan view:cache
+  && php artisan view:cache && \
+  touch /var/www/html/.env
 
 
 ENV FFMPEG_PATH=/usr/bin/ffmpeg \
