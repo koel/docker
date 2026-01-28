@@ -4,6 +4,8 @@ FROM alpine:3.23.2
 # The koel version to download
 ARG KOEL_VERSION_REF=v8.3.0
 
+ENV PHP_INI_DIR=/usr/local/etc/php
+
 # Install dependencies
 RUN apk add --no-cache --no-interactive \
 curl \
@@ -67,7 +69,7 @@ COPY apache/httpd.conf /etc/apache2/
 COPY apache/www.conf /etc/php84/php-fpm.d/
 
 # Copy php.ini
-COPY ./php.ini "$PHP_INI_DIR/php.ini"
+COPY ./php.ini ${PHP_INI_DIR}/php.ini
 
 # make crontab file
 RUN touch /etc/crontabs/www-data
