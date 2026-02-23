@@ -226,6 +226,10 @@ Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS supp
 
 Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
 
+## Local Development
+
+Inside `Makefile` you'll find several commands that can aid during the local development of koel/docker. For example, to build and start the `dev` docker-composer stack, run `make start`.
+
 ## Help & Support
 
 If you run into any issues, check the [Koel documentation][koel-doc] first. 
