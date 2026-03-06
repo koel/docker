@@ -3,245 +3,142 @@ koel/docker
 
 [![docker-pulls-badge]][docker-hub] ![Continuous testing and deployment](https://github.com/koel/docker/workflows/Continuous%20testing%20and%20deployment/badge.svg)
 
-A docker image with only the bare essentials needed to run [koel]. It includes Apache and a PHP runtime with required extensions.
+A Docker image with only the bare essentials needed to run [Koel]. It includes Apache and a PHP runtime with required extensions.
 
 > [!IMPORTANT]
-> This container does not include a database. It **requires** another container to handle the database.
+> This image does not include a database. A separate database container (MariaDB/MySQL or PostgreSQL) is required.
+> Ready-to-use Docker Compose configurations are provided — see [Quick Start](#quick-start).
 
-## Usage
+## Quick Start
 
-Since [Koel supports many databases][koel-requirements] you are free to choose any Docker image that hosts one of those databases.
-
-`koel/docker` (this image) has been tested with MariaDB/MySQL and PostgreSQL.
-
-### Run with docker-compose and MariaDB/MySQL
-
-[docker-compose] is the easiest way to get started. It will start both the database container and this image.
-Clone this repository and edit `docker-compose.mysql.yml`. **Make sure to replace passwords !**
-
-Check out the [`./docker-compose.mysql.yml`](<./docker-compose.mysql.yml>) file for more details.
-
-Then run `docker-compose`:
+[Docker Compose][docker-compose] is the easiest way to get started. Clone this repository, pick a compose file for your preferred database, update the passwords, and run:
 
 ```bash
-docker-compose -f ./docker-compose.mysql.yml up -d
+# For MariaDB/MySQL
+docker compose -f docker-compose.mysql.yml up -d
+
+# For PostgreSQL
+docker compose -f docker-compose.postgres.yml up -d
 ```
 
-### Run with docker-compose and PostgreSQL
+## Initial Setup
 
-Clone this repository and edit `docker-compose.postgres.yml`. **Make sure to replace passwords !**
+### The `koel:init` command
 
-Check out the [`./docker-compose.postgres.yml`](<./docker-compose.postgres.yml>) file for more details.
-
-Then run `docker-compose`:
+This command handles migrations, generates the `APP_KEY`, creates the default admin account, and performs other first-run tasks. It runs automatically when the container starts (disable with `SKIP_INIT=true`), but you can also run it manually:
 
 ```bash
-docker-compose -f ./docker-compose.postgres.yml up -d
+docker exec --user www-data -it <koel_container> php artisan koel:init --no-assets
 ```
 
-## The `koel:init` command
-
-This command is automatically ran when the container starts, but can be disabled if you want to do some manual adjustments first. As such it is often sufficient to provide the needed env variables to the container to setup koel.
-
-For the first installation and every subsequent upgrade, you will need to run the `koel:init` command, which handles migrations and other setup tasks.
-For instance, during the first run, this command will generate the `APP_KEY`, create the default admin user, and initialize the database. For subsequent runs, it will apply any new migrations and update the database schema as needed.
-
-In order to run this command, you first need to `exec` into the container (replace `<container_name_for_koel>` with the name of your running Koel container):
-
-```bash
-docker exec --user www-data -it <container_name_for_koel> bash
-```
-
-Once inside the container, run the `koel:init` command:
-
-```bash
-# --no-assets option tells the init command to skip building the front-end assets, 
-# as they have already been built and included in the Koel's installation archive.
-$ php artisan koel:init --no-assets
-```
-
-When prompted, provide `database` as the database host, `koel` as both the database name and username, and the password you set when 
-creating the database container.
+The `--no-assets` flag skips building front-end assets, as they are already included in the image.
 
 ### Default admin account
 
-During the first `koel:init`, Koel creates the default admin account for you. The credentials are as follows:
+The first `koel:init` creates a default admin account:
 
-* Email: `admin@koel.dev`
-* Password: `KoelIsCool`
+* **Email:** `admin@koel.dev`
+* **Password:** `KoelIsCool`
 
-For security purposes, run the following command to update the account's password **before using Koel**:
+**Change this password immediately:**
 
 ```bash
-docker exec -it <container_name_for_koel> php artisan koel:admin:change-password
+docker exec -it <koel_container> php artisan koel:admin:change-password
 ```
 
-You can also update the account (including the email) using the web interface after logging in.
+You can also update the email and password via the web interface after logging in.
 
-### Run manually with MariaDB/MySQL
+## Configuration
 
-Create a docker network. It will be shared by Koel and its database.
+### Preserving `APP_KEY`
 
-```bash
-docker network create --attachable koel-net
-```
+`APP_KEY` is generated during `koel:init` and is essential for encryption. If the container is recreated without persisting this key, you'll need to re-initialize. Two ways to preserve it:
 
-Create a database container. Here we will use [mariadb].
+**Option 1: Bind-mount the `.env` file**
 
 ```bash
-docker run -d --name database \
-    -e MYSQL_ROOT_PASSWORD=<root_password> \
-    -e MYSQL_DATABASE=koel \
-    -e MYSQL_USER=koel \
-    -e MYSQL_PASSWORD=<koel_password> \
-    --network=koel-net \
-    -v koel_db:/var/lib/mysql \
-    mariadb:10.11
-```
-
-Create the koel container on the same network so they can communicate
-
-```bash
-docker run -d --name koel \
-    -p 80:80 \
-    -e DB_CONNECTION=mysql \
-    -e DB_HOST=database \
-    -e DB_DATABASE=koel \
-    -e DB_USERNAME=koel \
-    -e DB_PASSWORD=<koel_password> \
-    --network=koel-net \
-    -v music:/music \
-    -v image_storage:/var/www/html/public/img/storage \
-    -v search_index:/var/www/html/storage/search-indexes \
-    phanan/koel
-```
-
-The same applies for the first run. See the [First run section](#first-run).
-
-### How to bind-mount the `.env` file
-
-To be sure to preserve `APP_KEY` you can choose to bind-mount the `.env` file to your host:
-
-```bash
-# On your host, create an `.env` file
 touch .env
-
-# Then, you can bind-mount it directly in the container
 docker run -d --name koel \
     -p 80:80 \
     --mount type=bind,source="$(pwd)"/.env,target=/var/www/html/.env \
     phanan/koel
-    
-docker exec --user www-data -it koel bash
-
-# In the container, run koel:init command with --no-assets flag
-$ php artisan koel:init --no-assets
 ```
 
-### Pass environment variables
-
-Once you have generated an `APP_KEY` you can provide it as environment variables to your container to preserve it.
+**Option 2: Pass `APP_KEY` as an environment variable**
 
 ```bash
-# Run a container just to generate the key
-docker run -it --rm phanan/koel bash
-# In the container, generate APP_KEY
-$ php artisan key:generate --force
-# Show the modified .env file
-$ cat .env
-# Copy the APP_KEY variable, and exit the container
-$ exit
-```
+# Generate a key
+docker run -it --rm phanan/koel php artisan key:generate --show
 
-You can then provide the variables to your real container:
-
-```bash
+# Pass it to your container
 docker run -d --name koel \
     -p 80:80 \
     -e APP_KEY=<your_app_key> \
     phanan/koel
-# Even better, write an env-file in your host and pass it to the container
-docker run -d --name koel \
-    -p 80:80 \
-    --env-file .koel.env \
-    phanan/koel
 ```
 
-### Scan media folders
-
-Koel's init script installs a [scheduler](https://docs.koel.dev/cli-commands#command-scheduling) that scans the `/music` folder daily for new music.
-You can also trigger a manual scan at any time by running the following command:
-
-```bash
-docker exec --user www-data <container_name_for_koel> php artisan koel:sync
-```
-
-### Populate the search indexes
-
-If you were running a version of Koel prior to v5.0.2, the search mechanism has changed and needs a step to index songs, albums and artists. Run the following command:
-
-```bash
-docker exec --user www-data <container_name_for_koel> php artisan koel:search:import
-```
-
-For all new songs, the search index will be automatically populated by `php artisan koel:scan`. No need to run the `php artisan koel:search:import` again 🙂.
-
-## Useful environment variables
+### Environment variables
 
 > [!IMPORTANT]
-> This list is not exhaustive and may not be up-to-date. See [`.env.example`][koel-env-example] for a complete reference.
+> This list is not exhaustive. See [`.env.example`][koel-env-example] for a complete reference.
 
-- `SKIP_INIT`: Prevents the container from automatically running the init script on startup.
-- `DB_CONNECTION`: `mysql` OR `pgsql` OR `sqlsrv` OR `sqlite-persistent`. Corresponds to the type of database being used with Koel.
-- `DB_HOST`: `database`. The name of the Docker container hosting the database. Koel needs to be on the same Docker network to find the database by its name.
-- `DB_USERNAME`: `koel`. If you change it, also change it in the database container.
-- `DB_PASSWORD`: The password credential matching `DB_USERNAME`. If you change it, also change it in the database container.
-- `DB_DATABASE`: `koel`. The database name for Koel. If you change it, also change it in the database container.
-- `APP_KEY`: A base64-encoded string, generated by `php artisan koel:init` or by `php artisan key:generate`.
-- `FORCE_HTTPS`: If set to `true`, all URLs redirects done by koel will use `https`. If you have set up a reverse-proxy in front of this container that supports `https`, set it to `true`.
-- `MEMORY_LIMIT`: The amount of memory in MB for the scanning process. Increase this value if `php artisan koel:scan` runs out of memory.
-- `LASTFM_API_KEY` and `LASTFM_API_SECRET`: Enables Last.fm integration. See https://docs.koel.dev/3rd-party.html#last-fm
-- `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`: Enables Spotify integration. See https://docs.koel.dev/3rd-party.html#spotify
-- `OPTIMIZE_CONFIG` Preloads and optimizes koel's configuration. This disables config modifications while the container is running. If you enable this, every change to the configuration will require a container restart to be applied.
+| Variable | Description |
+|---|---|
+| `SKIP_INIT` | If set, prevents the container from running `koel:init` on startup. |
+| `DB_CONNECTION` | `mysql`, `pgsql`, `sqlsrv`, or `sqlite-persistent`. |
+| `DB_HOST` | Hostname of the database container. Must be on the same Docker network. |
+| `DB_USERNAME` | Database username (default: `koel`). |
+| `DB_PASSWORD` | Database password. Must match the database container's configuration. |
+| `DB_DATABASE` | Database name (default: `koel`). |
+| `APP_KEY` | Base64-encoded key generated by `koel:init` or `key:generate`. |
+| `FORCE_HTTPS` | Set to `true` if using an HTTPS reverse proxy in front of Koel. |
+| `MEMORY_LIMIT` | Memory limit in MB for the scanning process. |
+| `LASTFM_API_KEY`, `LASTFM_API_SECRET` | Enables [Last.fm integration](https://docs.koel.dev/3rd-party.html#last-fm). |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` | Enables [Spotify integration](https://docs.koel.dev/3rd-party.html#spotify). |
+| `OPTIMIZE_CONFIG` | Preloads and optimizes configuration. Changes require a container restart. |
+
+## Managing Music
+
+Koel's init script installs a [scheduler](https://docs.koel.dev/cli-commands#command-scheduling) that scans `/music` daily. To trigger a manual scan:
+
+```bash
+docker exec --user www-data <koel_container> php artisan koel:sync
+```
 
 ## Volumes
 
-### /music
-
-`/music` will contain the music library.
-
-### /var/www/html/storage/search-indexes
-
-`/var/www/html/storage/search-indexes` will contain the search indexes. Searching songs, albums and artists leverages this to provide results.
+| Path | Description |
+|---|---|
+| `/music` | Your music library. |
+| `/var/www/html/public/img/storage` | Uploaded images (album art, user avatars, etc.). |
+| `/var/www/html/storage/search-indexes` | Search indexes for songs, albums, and artists. |
 
 ## Ports
 
-### 80
-
-Only HTTP is provided. Consider setting up a reverse-proxy to provide HTTPS support.
+Only port **80** (HTTP) is exposed. Set up a reverse proxy for HTTPS support.
 
 ## Workdir
 
-### /var/www/html
-
-Apache's root directory. All koel files will be here. If you `exec` into the container, this will be your current directory.
+The container's working directory is `/var/www/html` (Apache's document root). All Koel files reside here.
 
 ## Local Development
 
-Inside `Makefile` you'll find several commands that can aid during the local development of koel/docker. For example, to build and start the `dev` docker-composer stack, run `make start`.
+The `Makefile` contains several helper commands for local development. For example, to build and start the dev stack:
+
+```bash
+make start
+```
 
 ## Help & Support
 
-If you run into any issues, check the [Koel documentation][koel-doc] first. 
+If you run into any issues, check the [Koel documentation][koel-doc] first.
 If you encounter a bug in Koel itself, open an issue in the [Koel repository][koel-repo].
-This repo’s issues are reserved for Docker-related questions and problems.
+This repo's issues are reserved for Docker-related questions and problems.
 
 [koel-env-example]: https://github.com/koel/koel/blob/master/.env.example
-[koel-requirements]: https://docs.koel.dev/guide/getting-started#requirements
-[koel]: https://koel.dev/
+[Koel]: https://koel.dev/
 [koel-doc]: https://docs.koel.dev/
 [koel-repo]: https://github.com/koel/koel
-[mariadb]: https://hub.docker.com/r/mariadb/server
 [docker-compose]: https://docs.docker.com/compose/
 
 [docker-pulls-badge]: <https://img.shields.io/docker/pulls/phanan/koel>
