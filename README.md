@@ -5,6 +5,10 @@ koel/docker
 
 A Docker image with only the bare essentials needed to run [Koel]. It includes Apache and a PHP runtime with required extensions.
 
+> [!NOTE]
+> Instructions on `master` may not match the version you're running.
+> For version-specific documentation, switch to the corresponding tag (e.g., [`v8.3.1`](https://github.com/koel/docker/tree/v8.3.1)).
+
 > [!IMPORTANT]
 > This image does not include a database. A separate database container (MariaDB/MySQL or PostgreSQL) is required.
 > Ready-to-use Docker Compose configurations are provided — see [Quick Start](#quick-start).
