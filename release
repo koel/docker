@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+VERSION="${1:-}"
+
+if [ -z "$VERSION" ]; then
+  echo "Usage: ./release <version>"
+  echo "Example: ./release v8.3.1"
+  exit 1
+fi
+
+echo "Checking current branch..."
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$CURRENT_BRANCH" != "master" ]; then
+  echo "Error: You must be on 'master' branch. Current branch: $CURRENT_BRANCH"
+  exit 1
+fi
+
+echo "Checking working directory is clean..."
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Error: Working directory is not clean. Commit or stash changes first."
+  exit 1
+fi
+
+echo "Fetching latest changes..."
+git fetch
+
+echo "Tagging version $VERSION..."
+git tag "$VERSION"
+
+echo "Updating 'latest' tag..."
+git tag -f latest
+
+echo "Pushing master..."
+git push origin master
+
+echo "Pushing tags..."
+git push origin "$VERSION"
+git push origin latest --force
+
+echo "Release $VERSION completed successfully!"
