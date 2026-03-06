@@ -101,11 +101,11 @@ RUN cp -R /tmp/koel/. /var/www/html \
   && mv /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json \
   && chown -R www-data:www-data /var/www/html
 
-# Volumes for the music files and search index
+# Volumes for the music files, image storage, and search index
 # This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
 # Otherwise, they are owned by root and the user cannot write to them.
-VOLUME ["/music", "/var/www/html/storage/search-indexes"]
+VOLUME ["/music", "/var/www/html/public/img/storage", "/var/www/html/storage/search-indexes"]
 
 RUN cd /var/www/html \
   && php artisan route:cache \
