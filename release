@@ -23,6 +23,14 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+echo "Updating version strings..."
+sed -i '' "s|^ARG KOEL_VERSION_REF=.*|ARG KOEL_VERSION_REF=$VERSION|" Dockerfile
+sed -i '' "s|.*# DO NOT REMOVE — used by the release script|    - $VERSION # DO NOT REMOVE — used by the release script|" goss.yaml
+
+echo "Committing version bump..."
+git add Dockerfile goss.yaml
+git commit -m "bump Koel to $VERSION"
+
 echo "Fetching latest changes..."
 git fetch
 
