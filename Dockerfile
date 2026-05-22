@@ -81,6 +81,9 @@ RUN apt-get update \
   # Create the search-indexes volume so it has the correct permissions
   && mkdir -p /var/www/html/storage/search-indexes \
   && chown www-data:www-data /var/www/html/storage/search-indexes \
+  # Same for the image storage volume
+  && mkdir -p /var/www/html/storage/app/public/images \
+  && chown -R www-data:www-data /var/www/html/storage/app \
   # Set locale to prevent removal of non-ASCII path characters when transcoding with ffmpeg
   # See https://github.com/koel/docker/pull/91
   && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
