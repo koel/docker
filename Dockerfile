@@ -105,7 +105,7 @@ RUN cp -R /tmp/koel/. /var/www/html \
 # This declaration must be AFTER creating the folders and setting their permissions
 # and AFTER changing to non-root user.
 # Otherwise, they are owned by root and the user cannot write to them.
-VOLUME ["/music", "/var/www/html/public/img/storage", "/var/www/html/storage/search-indexes"]
+VOLUME ["/music", "/var/www/html/storage/app/public/images", "/var/www/html/storage/search-indexes"]
 
 RUN cd /var/www/html \
   && php artisan route:cache \

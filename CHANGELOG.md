@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## 2026-05-22
+### Fixed
+- ⚠ Image storage path moved to follow koel/koel#2479. If you're upgrading from a previous release, update your `docker-compose.yml` so the `image_storage` volume binds to `/var/www/html/storage/app/public/images` instead of `/var/www/html/public/img/storage`. Existing data in your `image_storage` volume / host bind transfers over automatically when you switch the mount point — files inside the volume don't move, only the mount path inside the container does.
+- Apache now follows symlinks under the document root, fixing the `Symbolic link not allowed or link target not accessible: /var/www/html/public/storage` error introduced when the new image path was symlinked.
+
 ## 2022-04-15
 ### Changed
 - ⚠ BREAKING CHANGE: Image name has changed, it is now [`phanan/koel`](https://hub.docker.com/r/phanan/koel) instead of `hyzual/koel`.
