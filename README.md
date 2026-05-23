@@ -114,7 +114,7 @@ docker exec --user www-data <koel_container> php artisan koel:sync
 | Path | Description |
 |---|---|
 | `/music` | Your music library. |
-| `/var/www/html/public/img/storage` | Uploaded images (album art, user avatars, etc.). |
+| `/var/www/html/storage/app/public/images` | Uploaded images (album art, user avatars, etc.). |
 | `/var/www/html/storage/search-indexes` | Search indexes for songs, albums, and artists. |
 
 ## Ports
