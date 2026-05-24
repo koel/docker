@@ -47,9 +47,7 @@ jobs:
 
       - name: Resolve version
         id: version
-        # Pass template values through `env:` rather than expanding into the shell script directly,
-        # so a malicious dispatch input can't inject commands. $GITHUB_REF_NAME is already in the
-        # runner's environment by default; only KOEL_VERSION needs explicit binding here.
+        # env-var indirection to prevent template injection from the dispatch input
         env:
           KOEL_VERSION: ${{ inputs.koel_version }}
         run: |
