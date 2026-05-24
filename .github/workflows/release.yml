@@ -3,6 +3,12 @@ on:
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch:
+    inputs:
+      koel_version:
+        description: 'Koel release tag to build against (e.g. v9.4.0). Required when triggered manually.'
+        required: true
+        type: string
 
 permissions: read-all
 
@@ -39,9 +45,13 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Get version from tag
+      - name: Resolve version
         id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        # Use the dispatch input when triggered manually; fall back to the pushed tag name.
+        run: |
+          REF="${{ inputs.koel_version || github.ref_name }}"
+          echo "VERSION=${REF#v}" >> "$GITHUB_OUTPUT"
+          echo "TAG=${REF}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push the production image
         uses: docker/build-push-action@v7
@@ -49,3 +59,5 @@ jobs:
           push: true
           tags: phanan/koel:latest,phanan/koel:${{ steps.version.outputs.VERSION }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
+          build-args: |
+            KOEL_VERSION_REF=${{ steps.version.outputs.TAG }}
