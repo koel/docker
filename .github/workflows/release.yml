@@ -47,9 +47,13 @@ jobs:
 
       - name: Resolve version
         id: version
-        # Use the dispatch input when triggered manually; fall back to the pushed tag name.
+        # Pass template values through `env:` rather than expanding into the shell script directly,
+        # so a malicious dispatch input can't inject commands. $GITHUB_REF_NAME is already in the
+        # runner's environment by default; only KOEL_VERSION needs explicit binding here.
+        env:
+          KOEL_VERSION: ${{ inputs.koel_version }}
         run: |
-          REF="${{ inputs.koel_version || github.ref_name }}"
+          REF="${KOEL_VERSION:-$GITHUB_REF_NAME}"
           echo "VERSION=${REF#v}" >> "$GITHUB_OUTPUT"
           echo "TAG=${REF}" >> "$GITHUB_OUTPUT"
 
