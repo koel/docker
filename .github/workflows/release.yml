@@ -6,6 +6,9 @@ on:
 
 permissions: read-all
 
+env:
+  IMAGE_NAME: phanan/koel
+
 jobs:
   test:
     name: Run tests
@@ -16,19 +19,39 @@ jobs:
       - name: Run tests
         uses: ./.github/actions/test
 
-  deploy:
-    name: Deploy to Docker Hub
-    runs-on: ubuntu-24.04
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.runner }}
     needs: [test]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # amd64 and arm64 each build on their own architecture. arm/v7 is 32-bit ARM,
+          # which the 64-bit Arm runners cannot execute, so it stays emulated on x86.
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            emulated: false
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            emulated: false
+          - platform: linux/arm/v7
+            runner: ubuntu-24.04
+            emulated: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Name this platform
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: echo "PLATFORM_SLUG=${PLATFORM//\//-}" >> "$GITHUB_ENV"
+
       - name: Set up QEMU
+        if: matrix.emulated
         uses: docker/setup-qemu-action@v4
-        id: qemu
         with:
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: ${{ matrix.platform }}
 
       - name: Set up Docker Build
         uses: docker/setup-buildx-action@v4
@@ -41,16 +64,76 @@ jobs:
 
       - name: Resolve version
         id: version
-        run: |
-          REF="$GITHUB_REF_NAME"
-          echo "VERSION=${REF#v}" >> "$GITHUB_OUTPUT"
-          echo "TAG=${REF}" >> "$GITHUB_OUTPUT"
+        run: echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
 
+      # Each platform is pushed as an untagged image, identified only by its digest.
+      # The merge job below collects the digests into one tagged multi-arch manifest.
       - name: Build and push the production image
+        id: build
         uses: docker/build-push-action@v7
         with:
-          push: true
-          tags: phanan/koel:latest,phanan/koel:${{ steps.version.outputs.VERSION }}
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: ${{ matrix.platform }}
           build-args: |
             KOEL_VERSION_REF=${{ steps.version.outputs.TAG }}
+          outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Record the digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p /tmp/digests
+          touch "/tmp/digests/${DIGEST#sha256:}"
+
+      - name: Upload the digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ env.PLATFORM_SLUG }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Push the multi-arch manifest
+    runs-on: ubuntu-24.04
+    needs: [build]
+    steps:
+      - name: Download the digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Resolve version
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create the manifest
+        working-directory: /tmp/digests
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          sources=()
+
+          for digest in *; do
+            sources+=("$IMAGE_NAME@sha256:$digest")
+          done
+
+          docker buildx imagetools create \
+            --tag "$IMAGE_NAME:latest" \
+            --tag "$IMAGE_NAME:$VERSION" \
+            "${sources[@]}"
+
+      - name: Verify the manifest
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: docker buildx imagetools inspect "$IMAGE_NAME:$VERSION"
