@@ -12,6 +12,8 @@ This repo builds the official Docker image for [koel](https://github.com/koel/ko
     5. Tags `vX.Y.Z` (lightweight) and force-moves the `latest` tag.
     6. Pushes `master`, the new tag, and the force-updated `latest` tag.
 - The tag push triggers `.github/workflows/release.yml`: it runs goss tests, then (on success) builds a multi-arch image (`linux/amd64`, `linux/arm64`, `linux/arm/v7`) and pushes to Docker Hub as `phanan/koel:latest` and `phanan/koel:X.Y.Z` (note: `v` prefix stripped — see "Image tags" below).
+- Each platform builds on its own runner and is pushed untagged, identified only by its digest; a final `merge` job stitches the digests into one tagged manifest with `docker buildx imagetools create`. So a partial failure leaves orphan digests on Docker Hub but never a half-built tag.
+- `linux/amd64` builds on `ubuntu-24.04` and `linux/arm64` on `ubuntu-24.04-arm`, both native. `linux/arm/v7` is 32-bit ARM, which neither 64-bit runner can execute, so it alone still runs under QEMU and dominates the wall clock. Dropping it would make the whole release fast, at the cost of older Raspberry Pi support.
 - There is **no draft step** for Docker images. If the workflow succeeds, the image is live on Docker Hub immediately. If goss tests fail, the git tag is already public but no image is pushed — you'll need to investigate and re-tag.
 - Wait for the workflow with `gh run watch <id>` (workflow name: `Release Docker image`). Verify after with `docker pull phanan/koel:X.Y.Z`.
 - The Docker release for a given version should follow the koel app release for that same version. Run the app release first (`php artisan koel:release` in the koel repo), wait for it to publish on GitHub, then run `./release vX.Y.Z` here.
