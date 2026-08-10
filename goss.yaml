@@ -84,6 +84,16 @@ file:
     owner: www-data
     group: www-data
     filetype: directory
+  /var/www/html/storage/app/public/images:
+    exists: true
+    mode: "0755"
+    owner: www-data
+    group: www-data
+    filetype: directory
+  /var/www/html/public/storage:
+    exists: true
+    filetype: symlink
+    linked-to: ../storage/app/public
 package:
   ffmpeg:
     installed: true
