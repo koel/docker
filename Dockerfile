@@ -102,6 +102,10 @@ RUN a2enmod rewrite
 # Copy the downloaded release
 RUN cp -R /tmp/koel/. /var/www/html \
   && mv /var/www/html/public/manifest.json.example /var/www/html/public/manifest.json \
+  # The release tarball ships public/storage as an absolute symlink into the path the
+  # release runner built it at, which resolves nowhere here and leaves koel unable to read
+  # or write uploaded images. Replace it with a relative link to the same target.
+  && ln -sfn ../storage/app/public /var/www/html/public/storage \
   && chown -R www-data:www-data /var/www/html
 
 # Volumes for the music files, image storage, and search index
