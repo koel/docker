@@ -7,7 +7,7 @@ Since this docker image only has one tag which is `latest`, there are no version
 
 ## 2026-09-09
 ### Fixed
-- Koel now creates the manifest (the file that lets you install Koel as an app) at `/manifest.json`. The `start_url` value comes from `APP_URL`. The name comes from your custom name on Koel Plus. Before this change, the file held the placeholder address `https://your.koel.host`. You do not have to edit or bind-mount the file. To keep a manifest that you wrote, bind-mount it over `/var/www/html/public/manifest.json`, and Koel serves your file instead.
+- Koel now creates the manifests (the files that let you install Koel as an app) at `/manifest.json` and `/manifest-remote.json`. The `start_url` value comes from `APP_URL`. The name comes from your custom name on Koel Plus. Before this change, the files held a placeholder address `https://your.koel.host`. You do not have to edit or bind-mount the file. To keep a manifest that you wrote, bind-mount it over `/var/www/html/public/manifest.json`, and Koel serves your file instead.
 
 ## 2026-05-22
 ### Fixed
