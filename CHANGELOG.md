@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## 2026-09-09
+### Fixed
+- Koel now creates the manifest (the file that lets you install Koel as an app) at `/manifest.json`. The `start_url` value comes from `APP_URL`. The name comes from your custom name on Koel Plus. Before this change, the file held the placeholder address `https://your.koel.host`. You do not have to edit or bind-mount the file. To keep a manifest that you wrote, bind-mount it over `/var/www/html/public/manifest.json`, and Koel serves your file instead.
+
 ## 2026-05-22
 ### Fixed
 - ⚠ Image storage path moved to follow koel/koel#2479. If you're upgrading from a previous release, update your `docker-compose.yml` so the `image_storage` volume binds to `/var/www/html/storage/app/public/images` instead of `/var/www/html/public/img/storage`. Existing data in your `image_storage` volume / host bind transfers over automatically when you switch the mount point — files inside the volume don't move, only the mount path inside the container does.
