@@ -14,7 +14,7 @@ services:
       - DB_DATABASE=koel
     volumes:
       - music:/music
-      - image_storage:/var/www/html/storage/app/public/images
+      - image_storage:/var/www/html/public/storage/images
       - search_index:/var/www/html/storage/search-indexes
 
   database:
