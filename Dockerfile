@@ -1,5 +1,5 @@
 # The runtime image.
-FROM php:8.4.8-apache-bookworm
+FROM php:8.4.27-apache-bookworm
 
 # The koel version to download
 ARG KOEL_VERSION_REF=v9.15.0
