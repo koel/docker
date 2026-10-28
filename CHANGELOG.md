@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## 2026-10-28
+### Fixed
+- Database migrations now run on container start when Koel is configured through environment variables (with `APP_KEY` set) instead of a mounted `.env` file. Before, the start-up script skipped them, so upgrading could leave the database out of date and Koel showing a 500 error (koel/koel#3040).
+
 ## 2026-09-09
 ### Fixed
 - Koel now creates the manifests (the files that let you install Koel as an app) at `/manifest.json` and `/manifest-remote.json`. The `start_url` value comes from `APP_URL`. The name comes from your custom name on Koel Plus. Before this change, the files held a placeholder address `https://your.koel.host`. You do not have to edit or bind-mount the file. To keep a manifest that you wrote, bind-mount it over `/var/www/html/public/manifest.json`, and Koel serves your file instead.
