@@ -124,7 +124,7 @@ proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection "upgrade";
 ```
 
-You can run `queue` without Reverb, but Reverb needs `queue`: with live updates on, Koel hands uploads and other jobs to the queue. To use neither, leave out the `queue`, `reverb` and `redis` services, the `artifacts` volume and their settings, and Koel runs jobs right away as before.
+You can run `queue` without Reverb, but Reverb needs `queue`: with live updates on, Koel hands uploads and other jobs to the queue. To use neither, leave out the `queue`, `reverb` and `redis` services, the `artifacts` and `redis_data` volumes and their settings, and Koel runs jobs right away as before.
 
 ## Managing Music
 

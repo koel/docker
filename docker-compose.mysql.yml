@@ -67,6 +67,8 @@ services:
 
   redis:
     image: redis:7-alpine
+    volumes:
+      - redis_data:/data
 
 volumes:
   db:
@@ -78,4 +80,6 @@ volumes:
   search_index:
     driver: local
   artifacts:
+    driver: local
+  redis_data:
     driver: local
