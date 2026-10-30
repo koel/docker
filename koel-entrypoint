@@ -5,6 +5,16 @@ set -e
 # Change to program root directory.
 cd /var/www/html
 
+# Run a background process instead of the web server. Setup is left to the main container.
+case "$1" in
+  queue)
+    exec setpriv --reuid=www-data --regid=www-data --init-groups php -d extension=pcntl artisan queue:work
+    ;;
+  reverb)
+    exec setpriv --reuid=www-data --regid=www-data --init-groups php -d extension=pcntl artisan reverb:start
+    ;;
+esac
+
 # Run the koel-init script to (optionally) optimize configs and (optionally) initialize/update koel
 su -s '/bin/sh' -c "/usr/local/bin/koel-init" www-data
 

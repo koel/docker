@@ -1,21 +1,59 @@
+x-koel: &koel
+  image: phanan/koel
+  depends_on:
+    - database
+    - redis
+  environment: &koel-environment
+    DB_CONNECTION: pgsql
+    DB_HOST: database
+    DB_PORT: 5432
+    DB_USERNAME: koel
+    DB_PASSWORD: <koel_password>
+    DB_DATABASE: koel
+    QUEUE_CONNECTION: redis
+    REDIS_HOST: redis
+    BROADCAST_CONNECTION: reverb
+    REVERB_APP_ID: koel
+    REVERB_APP_KEY: <reverb_app_key>
+    REVERB_APP_SECRET: <reverb_app_secret>
+    REVERB_HOST: localhost
+    REVERB_PORT: 80
+    REVERB_SCHEME: http
+    ARTIFACTS_PATH: /var/www/html/storage/app/artifacts
+  volumes:
+    - music:/music
+    - image_storage:/var/www/html/storage/app/public/images
+    - search_index:/var/www/html/storage/search-indexes
+    - artifacts:/var/www/html/storage/app/artifacts
+
 services:
   koel:
-    image: phanan/koel
-    depends_on:
-      - database
+    <<: *koel
     ports:
       - 80:80
+
+  queue:
+    <<: *koel
+    command: queue
+    restart: unless-stopped
+    # The image's stop signal suits Apache. PHP stops on SIGTERM.
+    stop_signal: SIGTERM
     environment:
-      - DB_CONNECTION=pgsql
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USERNAME=koel
-      - DB_PASSWORD=<koel_password>
-      - DB_DATABASE=koel
-    volumes:
-      - music:/music
-      - image_storage:/var/www/html/storage/app/public/images
-      - search_index:/var/www/html/storage/search-indexes
+      <<: *koel-environment
+      # Broadcasts are sent from here, where Koel's own address isn't served, so reach Reverb directly.
+      REVERB_HOST: reverb
+      REVERB_PORT: 8080
+      REVERB_SCHEME: http
+    healthcheck:
+      disable: true
+
+  reverb:
+    <<: *koel
+    command: reverb
+    restart: unless-stopped
+    stop_signal: SIGTERM
+    healthcheck:
+      disable: true
 
   database:
     image: postgres:13
@@ -26,6 +64,9 @@ services:
       - POSTGRES_USER=koel
       - POSTGRES_PASSWORD=<koel_password>
 
+  redis:
+    image: redis:7-alpine
+
 volumes:
   db:
     driver: local
@@ -34,4 +75,6 @@ volumes:
   image_storage:
     driver: local
   search_index:
+    driver: local
+  artifacts:
     driver: local

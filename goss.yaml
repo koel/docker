@@ -1,4 +1,13 @@
 file:
+  # Users extend the image and compile their own PHP extensions with these.
+  /usr/bin/gcc:
+    exists: true
+  /usr/bin/make:
+    exists: true
+  /usr/local/bin/phpize:
+    exists: true
+  /usr/local/bin/pecl:
+    exists: true
   /music:
     exists: true
     mode: "0755"
@@ -118,6 +127,22 @@ group:
     exists: true
     gid: 33
 command:
+  php_extensions:
+    exec: php -m
+    exit-status: 0
+    stdout: ['/^redis$/', '!/^pcntl$/']
+    timeout: 0
+  php_extensions_for_queue_and_reverb:
+    exec: php -d extension=pcntl -m
+    exit-status: 0
+    stdout: ['/^pcntl$/']
+    stderr: []
+    timeout: 0
+  apache_proxy_modules:
+    exec: apache2ctl -M
+    exit-status: 0
+    stdout: ['proxy_module', 'proxy_http_module']
+    timeout: 0
   artisan_env:
     exec: php artisan env
     exit-status: 0

@@ -18,3 +18,13 @@ runs:
     - name: Run goss tests on the image
       shell: bash
       run: dgoss run phanan/koel:test
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - name: Test the MySQL compose stack
+      shell: bash
+      run: tests/compose.sh phanan/koel:test mysql
+    - name: Test the PostgreSQL compose stack
+      shell: bash
+      run: tests/compose.sh phanan/koel:test postgres

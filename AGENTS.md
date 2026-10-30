@@ -32,6 +32,7 @@ This repo builds the official Docker image for [koel](https://github.com/koel/ko
 - Container smoke tests use [goss](https://github.com/goss-org/goss) — a lightweight assertion framework that checks files, ports, processes, and command outputs inside a built image.
 - The goss test config lives in `goss.yaml`. The release script touches the version-string line; do not edit that line manually.
 - The CI test job runs via `./.github/actions/test` against a freshly built image before any image push.
+- `tests/compose.sh [image] [mysql|postgres]` starts that compose file and checks a song upload and a live update, both of which go through the queue container. CI runs it after goss. It skips itself while the Koel version in the image has no Reverb.
 
 ## Script Portability
 - `release` is a bash script that uses BSD `sed` syntax (`sed -i ''` with an empty-string argument). It runs correctly on macOS but **will misbehave on GNU sed (Linux)** — `sed -i` on Linux requires no empty arg. Do not assume this script can be moved to CI runners without modification.
