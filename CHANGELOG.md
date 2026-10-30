@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Since this docker image only has one tag which is `latest`, there are no versions. However we'll write changes with the date at which they occured.
 
+## Unreleased
+### Added
+- The compose files now run background jobs on Redis and [Reverb](https://reverb.laravel.com) for live updates and the remote controller, each in its own container from the same image (`command: queue`, `command: reverb`). Koel and the queue share a new `artifacts` volume. See [Background jobs and live updates](README.md#background-jobs-and-live-updates). Existing setups keep working as they are.
+- The image now includes the `redis` PHP extension, and Apache forwards `/app/` and `/apps/` to a `reverb` container when there is one. The `pcntl` extension is included too, but only the `queue` and `reverb` containers load it.
+
 ## 2026-10-28
 ### Fixed
 - Database migrations now run on container start when Koel is configured through environment variables (with `APP_KEY` set) instead of a mounted `.env` file. Before, the start-up script skipped them, so upgrading could leave the database out of date and Koel showing a 500 error (koel/koel#3040).

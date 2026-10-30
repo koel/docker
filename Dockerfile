@@ -68,11 +68,17 @@ RUN apt-get update \
     bcmath \
     exif \
     gd \
+    pcntl \
     pdo \
     pdo_mysql \
     pdo_pgsql \
     pgsql \
     zip \
+  # pcntl is only loaded for the queue and reverb processes (see koel-entrypoint), so other setups run as before.
+  && rm "$PHP_INI_DIR/conf.d/docker-php-ext-pcntl.ini" \
+  && pecl install redis-6.2.0 \
+  && docker-php-ext-enable redis \
+  && rm -rf /tmp/pear \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   # Create the music volume so it has the correct permissions
@@ -83,6 +89,8 @@ RUN apt-get update \
   && chown www-data:www-data /var/www/html/storage/search-indexes \
   # Same for the image storage volume
   && mkdir -p /var/www/html/storage/app/public/images \
+  # And for the artifacts volume (uploads in progress, transcodes) that the queue container shares
+  && mkdir -p /var/www/html/storage/app/artifacts \
   && chown -R www-data:www-data /var/www/html/storage/app \
   # Set locale to prevent removal of non-ASCII path characters when transcoding with ffmpeg
   # See https://github.com/koel/docker/pull/91
@@ -97,7 +105,7 @@ COPY ./php.ini "$PHP_INI_DIR/php.ini"
 # /usr/local/etc/php/php.ini
 
 # Deploy Apache configuration
-RUN a2enmod rewrite
+RUN a2enmod rewrite proxy proxy_http
 
 # Copy the downloaded release
 RUN cp -R /tmp/koel/. /var/www/html \

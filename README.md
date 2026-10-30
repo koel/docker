@@ -15,7 +15,7 @@ A Docker image with only the bare essentials needed to run [Koel]. It includes A
 
 ## Quick Start
 
-[Docker Compose][docker-compose] is the easiest way to get started. Clone this repository, pick a compose file for your preferred database, update the passwords, and run:
+[Docker Compose][docker-compose] is the easiest way to get started. Clone this repository, pick a compose file for your preferred database, fill in the passwords and the Reverb keys (see [Background jobs and live updates](#background-jobs-and-live-updates)), and run:
 
 ```bash
 # For MariaDB/MySQL
@@ -100,6 +100,31 @@ docker run -d --name koel \
 | `LASTFM_API_KEY`, `LASTFM_API_SECRET` | Enables [Last.fm integration](https://docs.koel.dev/3rd-party.html#last-fm). |
 | `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` | Enables [Spotify integration](https://docs.koel.dev/3rd-party.html#spotify). |
 | `OPTIMIZE_CONFIG` | Preloads and optimizes configuration. Changes require a container restart. |
+| `QUEUE_CONNECTION`, `REDIS_HOST` | Run background jobs through a queue, e.g. `redis` and the Redis container's hostname. See [Background jobs and live updates](#background-jobs-and-live-updates). |
+| `BROADCAST_CONNECTION`, `REVERB_*` | Enable live updates and the remote controller with Reverb. See [Background jobs and live updates](#background-jobs-and-live-updates). |
+
+### Background jobs and live updates
+
+The compose files run two extra containers from the same image next to Koel:
+
+* `queue` (`command: queue`) works through background jobs, which Koel puts on Redis with `QUEUE_CONNECTION=redis`.
+* `reverb` (`command: reverb`) runs [Reverb](https://reverb.laravel.com), which powers live updates and the [remote controller](https://docs.koel.dev/usage/remote-controller). Koel's container forwards `/app/` and `/apps/` to `reverb:8080`, so browsers reach Reverb on Koel's own address. This container must be named `reverb` and be on the same network as Koel.
+
+If you set these containers up yourself, give `queue` and `reverb` the stop signal `SIGTERM` (`stop_signal: SIGTERM` in compose). The image's default stop signal is for Apache, so they would only stop when Docker kills them.
+
+Both need the same configuration as Koel. The compose files share it through the `x-koel` block, so put your settings there, including `APP_KEY` (see [Preserving `APP_KEY`](#preserving-app_key)). If you mount a `.env` file instead, mount it into all three containers.
+
+Koel and `queue` also share the `artifacts` volume through `ARTIFACTS_PATH`, because jobs pick up files that Koel saved, such as uploads. The `queue` container sends live updates straight to `reverb`, so it sets its own `REVERB_HOST`, `REVERB_PORT` and `REVERB_SCHEME`.
+
+For Reverb, fill in `REVERB_APP_KEY` and `REVERB_APP_SECRET` with random strings, and set `REVERB_HOST`, `REVERB_PORT` and `REVERB_SCHEME` to the address you open Koel at, e.g. `koel.example.com`, `443` and `https` behind an HTTPS reverse proxy. The reverse proxy must pass WebSocket connections on. Caddy and Traefik do this on their own. For nginx, add this to the `location` block that proxies Koel:
+
+```nginx
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+```
+
+You can run `queue` without Reverb, but Reverb needs `queue`: with live updates on, Koel hands uploads and other jobs to the queue. To use neither, leave out the `queue`, `reverb` and `redis` services, the `artifacts` and `redis_data` volumes and their settings, and Koel runs jobs right away as before.
 
 ## Managing Music
 
@@ -116,6 +141,7 @@ docker exec --user www-data <koel_container> php artisan koel:sync
 | `/music` | Your music library. |
 | `/var/www/html/storage/app/public/images` | Uploaded images (album art, user avatars, etc.). |
 | `/var/www/html/storage/search-indexes` | Search indexes for songs, albums, and artists. |
+| `/var/www/html/storage/app/artifacts` | Uploads in progress, transcodes and other files that Koel and the `queue` container share. Used when `ARTIFACTS_PATH` points here, as in the compose files. |
 
 ## Ports
 
